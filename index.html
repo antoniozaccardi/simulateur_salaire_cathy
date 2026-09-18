@@ -190,6 +190,33 @@
             font-weight: 600;
         }
 
+        .nota-bene {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            color: #78350f;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .nota-bene strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #92400e;
+        }
+
+        .nota-bene ul {
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        .nota-bene li {
+            margin-bottom: 3px;
+        }
+
         .export-btn {
             width: 100%;
             padding: 6px;
@@ -311,6 +338,16 @@
             </div>
 
             <div class="calculations" id="detailedCalculation"></div>
+
+            <div class="nota-bene">
+                <strong>⚠️ À noter :</strong>
+                <ul>
+                    <li>Le salaire étant annualisé, les congés comptent comme des jours travaillés et ne sont pas décomptés des jours d'activité</li>
+                    <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistance</li>
+                    <li>Les indemnités (repas & entretien) sont uniquement dues sur les jours travaillés</li>
+                </ul>
+            </div>
+
             <button id="exportPdf" class="export-btn">📥 Exporter en PDF</button>
         </div>
     </div>
