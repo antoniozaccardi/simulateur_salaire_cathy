@@ -198,6 +198,30 @@
         .info-box strong {
             color: #2980b9;
         }
+
+        .export-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -294,10 +318,13 @@
                 </div>
 
                 <div class="calculation-detail" id="monthlyDetail"></div>
+
+                <button id="exportPdf" class="export-btn">📥 Exporter en PDF</button>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         const inputs = {
             daysPerWeek: document.getElementById('daysPerWeek'),
@@ -370,6 +397,232 @@
         Object.values(inputs).forEach(input => {
             input.addEventListener('change', calculate);
             input.addEventListener('input', calculate);
+        });
+
+        // Export PDF
+        document.getElementById('exportPdf').addEventListener('click', function() {
+            const daysPerWeek = parseInt(inputs.daysPerWeek.value);
+            const hoursPerDay = parseFloat(inputs.hoursPerDay.value);
+            const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
+            const hourlyRateSup = parseFloat(inputs.hourlyRateSup.value);
+            const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
+            const dailyMeal = parseFloat(inputs.dailyMeal.value);
+
+            const totalWeeklyHours = daysPerWeek * hoursPerDay;
+            const weeklyNormalHours = Math.min(totalWeeklyHours, 35);
+            const weeklyOvertimeHours = Math.max(0, totalWeeklyHours - 35);
+
+            const monthlyNormalHours = (weeklyNormalHours * 52) / 12;
+            const monthlyOvertimeHours = (weeklyOvertimeHours * 52) / 12;
+            const monthlyDays = daysPerWeek === 4 ? 18 : 22;
+
+            const monthlySalaryNormal = monthlyNormalHours * hourlyRateNormal;
+            const monthlySalarySup = monthlyOvertimeHours * hourlyRateSup;
+            const monthlyAllowances = (dailyMaintenance + dailyMeal) * monthlyDays;
+            const totalNet = monthlySalaryNormal + monthlySalarySup + monthlyAllowances;
+
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            padding: 20px;
+                            color: #333;
+                        }
+                        .header {
+                            border-bottom: 3px solid #667eea;
+                            padding-bottom: 15px;
+                            margin-bottom: 20px;
+                            text-align: center;
+                        }
+                        .header h1 {
+                            margin: 0;
+                            color: #667eea;
+                            font-size: 24px;
+                        }
+                        .header p {
+                            margin: 5px 0;
+                            color: #666;
+                            font-size: 12px;
+                        }
+                        .date {
+                            text-align: right;
+                            font-size: 11px;
+                            color: #999;
+                            margin-bottom: 15px;
+                        }
+                        .section {
+                            margin-bottom: 20px;
+                            page-break-inside: avoid;
+                        }
+                        .section-title {
+                            background: #667eea;
+                            color: white;
+                            padding: 10px;
+                            margin-bottom: 10px;
+                            font-weight: bold;
+                            font-size: 12px;
+                            border-radius: 3px;
+                        }
+                        .parameters {
+                            background: #f5f5f5;
+                            padding: 10px;
+                            font-size: 11px;
+                            border-left: 3px solid #667eea;
+                        }
+                        .param-row {
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 5px 0;
+                            border-bottom: 1px solid #ddd;
+                        }
+                        .param-row:last-child {
+                            border-bottom: none;
+                        }
+                        .param-label {
+                            font-weight: 500;
+                        }
+                        .results-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            font-size: 11px;
+                        }
+                        .results-table td {
+                            padding: 8px;
+                            border-bottom: 1px solid #ddd;
+                        }
+                        .results-table td:first-child {
+                            font-weight: 500;
+                            width: 60%;
+                        }
+                        .results-table td:last-child {
+                            text-align: right;
+                            font-weight: 600;
+                        }
+                        .results-table tr.total-row {
+                            background: #667eea;
+                            color: white;
+                            font-size: 13px;
+                            font-weight: bold;
+                        }
+                        .results-table tr.total-row td {
+                            border-bottom: none;
+                            padding: 10px 8px;
+                        }
+                        .detail-box {
+                            background: #f0f4ff;
+                            padding: 10px;
+                            margin-top: 10px;
+                            border-left: 3px solid #667eea;
+                            font-size: 10px;
+                            line-height: 1.4;
+                            color: #555;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>💰 Simulateur de Salaire</h1>
+                        <p>Catherine ZACCARDI | Yerres (91330)</p>
+                    </div>
+                    <div class="date">Généré le ${new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+
+                    <div class="section">
+                        <div class="section-title">📋 PARAMÈTRES</div>
+                        <div class="parameters">
+                            <div class="param-row">
+                                <span class="param-label">Jours de travail par semaine</span>
+                                <span>${daysPerWeek} jours</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Heures travaillées par jour</span>
+                                <span>${hoursPerDay}h</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Taux horaire Net (heures normales)</span>
+                                <span>${hourlyRateNormal.toFixed(2)}€/h</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Taux horaire Net (heures sup)</span>
+                                <span>${hourlyRateSup.toFixed(2)}€/h</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Indemnité entretien</span>
+                                <span>${dailyMaintenance.toFixed(2)}€/jour</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Indemnité repas</span>
+                                <span>${dailyMeal.toFixed(2)}€/jour</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">📊 CALCULS HEBDOMADAIRES</div>
+                        <div class="detail-box">
+                            ${daysPerWeek} jours × ${hoursPerDay}h/jour = <strong>${totalWeeklyHours}h/semaine</strong><br>
+                            → <strong>${weeklyNormalHours.toFixed(1)}h normales</strong> + <strong>${weeklyOvertimeHours.toFixed(1)}h supplémentaires</strong>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">💵 RÉSULTATS MENSUELS</div>
+                        <table class="results-table">
+                            <tr>
+                                <td>Heures normales</td>
+                                <td>${monthlyNormalHours.toFixed(1)}h × ${hourlyRateNormal.toFixed(2)}€</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>${monthlySalaryNormal.toFixed(2)}€</td>
+                            </tr>
+                            <tr>
+                                <td>Heures supplémentaires</td>
+                                <td>${monthlyOvertimeHours.toFixed(1)}h × ${hourlyRateSup.toFixed(2)}€</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>${monthlySalarySup.toFixed(2)}€</td>
+                            </tr>
+                            <tr>
+                                <td>Indemnités (${monthlyDays} jours × ${(dailyMaintenance + dailyMeal).toFixed(2)}€)</td>
+                                <td>${monthlyAllowances.toFixed(2)}€</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>NET GLOBAL</td>
+                                <td>${totalNet.toFixed(2)}€</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <div class="detail-box">
+                            <strong>Détail du calcul :</strong><br>
+                            Salaire heures normales : ${monthlySalaryNormal.toFixed(2)}€<br>
+                            Salaire heures sup : ${monthlySalarySup.toFixed(2)}€<br>
+                            Indemnités mensuelles : ${monthlyAllowances.toFixed(2)}€<br>
+                            = <strong>${totalNet.toFixed(2)}€ NET MENSUEL</strong>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const element = document.createElement('div');
+            element.innerHTML = htmlContent;
+
+            const options = {
+                margin: 10,
+                filename: `simulateur_salaire_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            html2pdf().set(options).from(element.innerHTML).save();
         });
 
         // Calcul initial
