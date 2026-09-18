@@ -236,6 +236,18 @@
             transform: scale(1.01);
         }
 
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        @media print {
+            .button-group {
+                display: none !important;
+            }
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.8em;
@@ -348,7 +360,10 @@
                 </ul>
             </div>
 
-            <button id="exportPdf" class="export-btn">📥 Exporter en PDF</button>
+            <div class="button-group">
+                <button id="exportPdf" class="export-btn">📥 Exporter en PDF</button>
+                <button id="printBtn" class="export-btn">🖨️ Imprimer</button>
+            </div>
         </div>
     </div>
 
@@ -740,6 +755,10 @@
             printWindow.document.write(htmlContent);
             printWindow.document.close();
             setTimeout(() => printWindow.print(), 250);
+        });
+
+        document.getElementById('printBtn').addEventListener('click', function() {
+            window.print();
         });
 
         calculate();
