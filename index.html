@@ -58,12 +58,11 @@
 
         .config-info {
             background: white;
-            border: 1px solid #e5e5e5;
-            padding: 16px;
-            margin-bottom: 24px;
-            border-radius: 8px;
-            font-size: 0.95em;
-            color: #666666;
+            border: 1px solid #d5d5d7;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #1d1d1d;
         }
 
         .params-grid {
@@ -214,11 +213,7 @@
 
         <!-- PARAMÈTRES EN HAUT -->
         <div class="params-panel">
-            <div class="config-info">
-                <strong>Configuration :</strong> <span id="configDays">Lun, Mar, Jeu, Ven</span> | <span id="configHours">8h30 - 17h30</span>
-            </div>
-
-            <div class="params-grid">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; align-items: end;">
                 <div class="param-item">
                     <label>Jours/semaine</label>
                     <select id="daysPerWeek">
@@ -227,15 +222,23 @@
                     </select>
                 </div>
 
-                <div class="param-item">
-                    <label>Début</label>
-                    <input type="time" id="startTime" value="08:30">
+                <div class="config-info" style="margin-bottom: 0; padding: 8px 12px;">
+                    <strong>Configuration :</strong> <span id="configDays">Lun, Mar, Jeu, Ven</span>
                 </div>
 
-                <div class="param-item">
-                    <label>Fin</label>
-                    <input type="time" id="endTime" value="17:30">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="param-item" style="margin-bottom: 0;">
+                        <label style="font-size: 0.8em;">Début</label>
+                        <input type="time" id="startTime" value="08:30">
+                    </div>
+                    <div class="param-item" style="margin-bottom: 0;">
+                        <label style="font-size: 0.8em;">Fin</label>
+                        <input type="time" id="endTime" value="17:30">
+                    </div>
                 </div>
+            </div>
+
+            <div class="params-grid">
 
                 <div class="param-item">
                     <label>Heures/jour</label>
@@ -251,12 +254,18 @@
 
                 <div class="param-item">
                     <label>Indemnité entretien</label>
-                    <input type="number" id="dailyMaintenance" value="4.0" step="0.01">
+                    <div style="position: relative;">
+                        <input type="number" id="dailyMaintenance" value="4" step="1" style="padding-right: 24px;">
+                        <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666666; font-weight: 500;">€</span>
+                    </div>
                 </div>
 
                 <div class="param-item">
                     <label>Indemnité repas</label>
-                    <input type="number" id="dailyMeal" value="1.0" step="0.01">
+                    <div style="position: relative;">
+                        <input type="number" id="dailyMeal" value="1" step="1" style="padding-right: 24px;">
+                        <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666666; font-weight: 500;">€</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -319,9 +328,7 @@
 
             document.getElementById('calculatedHours').textContent = hoursPerDay.toFixed(1);
             const daysLabel = daysLabels[daysPerWeek];
-            const timeRange = `${inputs.startTime.value.slice(0,5)} - ${inputs.endTime.value.slice(0,5)}`;
             document.getElementById('configDays').textContent = daysLabel;
-            document.getElementById('configHours').textContent = timeRange;
 
             const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
             const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
@@ -371,11 +378,11 @@
 
             if (period === 'monthly') {
                 document.getElementById('detailedCalculation').innerHTML = `
-                    <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyDays} × ${dailyAllowance.toFixed(2)}€ = ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
+                    <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyDays} × ${Math.round(dailyAllowance)}€ = ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
                 `;
             } else {
                 document.getElementById('detailedCalculation').innerHTML = `
-                    <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualDays} × ${dailyAllowance.toFixed(2)}€ = ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
+                    <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualDays} × ${Math.round(dailyAllowance)}€ = ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
                 `;
             }
         }
