@@ -307,28 +307,37 @@
                 <div class="calculation-detail" id="weeklyDetail"></div>
 
                 <div class="result-section">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #667eea;">Période</label>
+                        <select id="period" style="width: 100%; padding: 10px; border: 2px solid #667eea; border-radius: 6px;">
+                            <option value="monthly">Mensuel (moyenne annuelle)</option>
+                            <option value="annual">Annuel</option>
+                        </select>
+                    </div>
+
                     <div class="result-item">
                         <span class="result-label">Salaire heures normales</span>
-                        <span class="result-value" id="monthlySalaryNormal">0 €</span>
+                        <span class="result-value" id="salaryNormal">0 €</span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Salaire heures sup</span>
-                        <span class="result-value" id="monthlySalarySup">0 €</span>
+                        <span class="result-value" id="salarySup">0 €</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">Indemnités mensuelles</span>
-                        <span class="result-value positive" id="monthlyAllowances">0 €</span>
+                        <span class="result-label">Indemnités</span>
+                        <span class="result-value positive" id="allowances">0 €</span>
                     </div>
                 </div>
 
                 <div class="result-section">
                     <div class="result-item total">
-                        <span class="result-label">💰 NET GLOBAL</span>
+                        <span class="result-label" id="totalLabel">💰 NET GLOBAL</span>
                         <span class="result-value" id="totalNet" style="font-size: 1.5em;">0 €</span>
                     </div>
                 </div>
 
-                <div class="calculation-detail" id="monthlyDetail"></div>
+                <div class="calculation-detail" id="methodDetail"></div>
+                <div class="calculation-detail" id="detailedCalculation"></div>
 
                 <button id="exportPdf" class="export-btn">📥 Exporter en PDF</button>
             </div>
@@ -363,44 +372,103 @@
             const hourlyRateSup = parseFloat(inputs.hourlyRateSup.value);
             const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
             const dailyMeal = parseFloat(inputs.dailyMeal.value);
+            const period = document.getElementById('period').value;
 
             // Calculs hebdomadaires
             const totalWeeklyHours = daysPerWeek * hoursPerDay;
             const weeklyNormalHours = Math.min(totalWeeklyHours, 35);
             const weeklyOvertimeHours = Math.max(0, totalWeeklyHours - 35);
 
-            // Calculs mensuels (52 semaines / 12 mois)
+            // Calculs mensuels (52 semaines / 12 mois = 4.333 semaines/mois)
             const monthlyNormalHours = (weeklyNormalHours * 52) / 12;
             const monthlyOvertimeHours = (weeklyOvertimeHours * 52) / 12;
             const monthlyDays = daysPerWeek === 4 ? 18 : 22;
 
+            // Calculs annuels
+            const annualNormalHours = weeklyNormalHours * 52;
+            const annualOvertimeHours = weeklyOvertimeHours * 52;
+            const annualDays = monthlyDays * 12;
+
+            // Salaires mensuels
             const monthlySalaryNormal = monthlyNormalHours * hourlyRateNormal;
             const monthlySalarySup = monthlyOvertimeHours * hourlyRateSup;
             const monthlyAllowances = (dailyMaintenance + dailyMeal) * monthlyDays;
+            const monthlyTotal = monthlySalaryNormal + monthlySalarySup + monthlyAllowances;
 
-            const totalNet = monthlySalaryNormal + monthlySalarySup + monthlyAllowances;
+            // Salaires annuels
+            const annualSalaryNormal = annualNormalHours * hourlyRateNormal;
+            const annualSalarySup = annualOvertimeHours * hourlyRateSup;
+            const annualAllowances = (dailyMaintenance + dailyMeal) * annualDays;
+            const annualTotal = annualSalaryNormal + annualSalarySup + annualAllowances;
+
+            // Affichage selon la période
+            let displaySalaryNormal, displaySalarySup, displayAllowances, displayTotal, periodLabel;
+
+            if (period === 'monthly') {
+                displaySalaryNormal = monthlySalaryNormal;
+                displaySalarySup = monthlySalarySup;
+                displayAllowances = monthlyAllowances;
+                displayTotal = monthlyTotal;
+                periodLabel = '💰 NET MENSUEL';
+            } else {
+                displaySalaryNormal = annualSalaryNormal;
+                displaySalarySup = annualSalarySup;
+                displayAllowances = annualAllowances;
+                displayTotal = annualTotal;
+                periodLabel = '💰 NET ANNUEL';
+            }
 
             // Mise à jour des résultats
             results.weeklyNormalHours.textContent = weeklyNormalHours.toFixed(1);
             results.weeklyOvertimeHours.textContent = weeklyOvertimeHours.toFixed(1);
-            results.monthlySalaryNormal.textContent = monthlySalaryNormal.toFixed(2) + ' €';
-            results.monthlySalarySup.textContent = monthlySalarySup.toFixed(2) + ' €';
-            results.monthlyAllowances.textContent = monthlyAllowances.toFixed(2) + ' €';
-            results.totalNet.textContent = totalNet.toFixed(2) + ' €';
+            results.salaryNormal = displaySalaryNormal;
+            results.salarySup = displaySalarySup;
+            results.allowances = displayAllowances;
+            document.getElementById('salaryNormal').textContent = displaySalaryNormal.toFixed(2) + ' €';
+            document.getElementById('salarySup').textContent = displaySalarySup.toFixed(2) + ' €';
+            document.getElementById('allowances').textContent = displayAllowances.toFixed(2) + ' €';
+            document.getElementById('totalLabel').textContent = periodLabel;
+            results.totalNet.textContent = displayTotal.toFixed(2) + ' €';
 
             // Détails de calcul
             results.weeklyDetail.innerHTML = `
-                <strong>Calcul hebdomadaire :</strong><br>
+                <strong>📅 Calcul hebdomadaire :</strong><br>
                 ${daysPerWeek} jours × ${hoursPerDay}h/jour = <strong>${totalWeeklyHours}</strong>h/semaine<br>
-                → ${weeklyNormalHours.toFixed(1)}h normales + ${weeklyOvertimeHours.toFixed(1)}h sup
+                → <strong>${weeklyNormalHours.toFixed(1)}h normales</strong> (max 35h) + <strong>${weeklyOvertimeHours.toFixed(1)}h supplémentaires</strong>
             `;
 
-            results.monthlyDetail.innerHTML = `
-                <strong>Calcul mensuel (moyenne annuelle) :</strong><br>
-                Heures normales : ${monthlyNormalHours.toFixed(1)}h × ${hourlyRateNormal}€ = <strong>${monthlySalaryNormal.toFixed(2)}€</strong><br>
-                Heures sup : ${monthlyOvertimeHours.toFixed(1)}h × ${hourlyRateSup}€ = <strong>${monthlySalarySup.toFixed(2)}€</strong><br>
-                Indemnités : ${monthlyDays} jours × (${dailyMaintenance}€ + ${dailyMeal}€) = <strong>${monthlyAllowances.toFixed(2)}€</strong>
+            // Explication de la méthodologie
+            document.getElementById('methodDetail').innerHTML = `
+                <strong>📊 Méthodologie :</strong><br>
+                <strong>Mensuel :</strong> Moyenne annuelle = (Heures/semaine × 52) ÷ 12 mois<br>
+                <strong>Annuel :</strong> Heures/semaine × 52 semaines<br>
+                <strong>Jours/mois :</strong> ${daysPerWeek === 4 ? '18 jours (4j/semaine)' : '22 jours (5j/semaine)'}
             `;
+
+            // Détail complet du calcul
+            if (period === 'monthly') {
+                document.getElementById('detailedCalculation').innerHTML = `
+                    <strong>🔢 Détail du calcul MENSUEL :</strong><br>
+                    <strong>Heures :</strong> ${monthlyNormalHours.toFixed(1)}h normales + ${monthlyOvertimeHours.toFixed(1)}h sup<br>
+                    <strong>Heures normales :</strong> ${monthlyNormalHours.toFixed(1)}h × ${hourlyRateNormal}€/h = <strong>${monthlySalaryNormal.toFixed(2)}€</strong><br>
+                    <strong>Heures sup :</strong> ${monthlyOvertimeHours.toFixed(1)}h × ${hourlyRateSup}€/h = <strong>${monthlySalarySup.toFixed(2)}€</strong><br>
+                    <strong>Indemnités :</strong> ${monthlyDays} jours × ${(dailyMaintenance + dailyMeal).toFixed(2)}€/jour = <strong>${monthlyAllowances.toFixed(2)}€</strong><br>
+                    <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;">
+                    <strong style="color: #667eea;">TOTAL MENSUEL : ${monthlyTotal.toFixed(2)}€</strong><br>
+                    <strong style="font-size: 0.9em; color: #999;">Annuel : ${annualTotal.toFixed(2)}€</strong>
+                `;
+            } else {
+                document.getElementById('detailedCalculation').innerHTML = `
+                    <strong>🔢 Détail du calcul ANNUEL :</strong><br>
+                    <strong>Heures :</strong> ${annualNormalHours.toFixed(1)}h normales + ${annualOvertimeHours.toFixed(1)}h sup<br>
+                    <strong>Heures normales :</strong> ${annualNormalHours.toFixed(1)}h × ${hourlyRateNormal}€/h = <strong>${annualSalaryNormal.toFixed(2)}€</strong><br>
+                    <strong>Heures sup :</strong> ${annualOvertimeHours.toFixed(1)}h × ${hourlyRateSup}€/h = <strong>${annualSalarySup.toFixed(2)}€</strong><br>
+                    <strong>Indemnités :</strong> ${annualDays} jours × ${(dailyMaintenance + dailyMeal).toFixed(2)}€/jour = <strong>${annualAllowances.toFixed(2)}€</strong><br>
+                    <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;">
+                    <strong style="color: #667eea;">TOTAL ANNUEL : ${annualTotal.toFixed(2)}€</strong><br>
+                    <strong style="font-size: 0.9em; color: #999;">Mensuel : ${monthlyTotal.toFixed(2)}€</strong>
+                `;
+            }
         }
 
         // Événements
@@ -408,6 +476,8 @@
             input.addEventListener('change', calculate);
             input.addEventListener('input', calculate);
         });
+
+        document.getElementById('period').addEventListener('change', calculate);
 
         // Export PDF
         document.getElementById('exportPdf').addEventListener('click', function() {
