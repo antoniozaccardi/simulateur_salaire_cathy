@@ -297,12 +297,12 @@
 
                 <div class="param-item">
                     <label>Indemnité entretien (€)</label>
-                    <input type="number" id="dailyMaintenance" value="4.0" step="0.01">
+                    <input type="number" id="dailyMaintenance" value="4" step="1">
                 </div>
 
                 <div class="param-item">
                     <label>Indemnité repas (€)</label>
-                    <input type="number" id="dailyMeal" value="1.0" step="0.01">
+                    <input type="number" id="dailyMeal" value="1" step="1">
                 </div>
 
                 <div class="param-item">
@@ -425,8 +425,8 @@
             const totalMeal = dailyMeal * monthlyDays;
 
             document.getElementById('salary').textContent = displaySalary.toFixed(2) + ' €';
-            document.getElementById('maintenanceTotal').textContent = totalMaintenance.toFixed(2) + ' €';
-            document.getElementById('mealTotal').textContent = totalMeal.toFixed(2) + ' €';
+            document.getElementById('maintenanceTotal').textContent = totalMaintenance.toFixed(0) + ' €';
+            document.getElementById('mealTotal').textContent = totalMeal.toFixed(0) + ' €';
             document.getElementById('totalLabel').textContent = periodLabel;
             document.getElementById('totalNet').textContent = displayTotal.toFixed(2) + ' €';
 
