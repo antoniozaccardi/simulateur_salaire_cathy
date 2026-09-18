@@ -472,12 +472,11 @@
             const monthlySalary = monthlyHours * hourlyRateNormal;
             const monthlyAllowances = (dailyMaintenance + dailyMeal) * monthlyDays;
             const monthlyTotal = monthlySalary + monthlyAllowances;
+            const totalMaintenance = dailyMaintenance * monthlyDays;
+            const totalMeal = dailyMeal * monthlyDays;
 
-            const annualHours = totalWeeklyHours * 52;
-            const annualDays = monthlyDays * 12;
-            const annualSalary = annualHours * hourlyRateNormal;
-            const annualAllowances = (dailyMaintenance + dailyMeal) * annualDays;
-            const annualTotal = annualSalary + annualAllowances;
+            const daysLabel = daysPerWeek === 4 ? 'Lun, Mar, Jeu, Ven' : 'Lun - Ven';
+            const timeRange = `${startTime} - ${endTime}`;
 
             const htmlContent = `
                 <!DOCTYPE html>
@@ -485,34 +484,117 @@
                 <head>
                     <meta charset="UTF-8">
                     <style>
-                        body { font-family: Arial; padding: 20px; }
-                        .header { text-align: center; border-bottom: 2px solid #667eea; padding-bottom: 10px; margin-bottom: 15px; }
-                        .header h1 { color: #667eea; margin: 0; }
-                        .section { margin-bottom: 15px; }
-                        .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #ddd; }
-                        .total { background: #667eea; color: white; font-weight: bold; padding: 8px; margin-top: 10px; }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; padding: 30px; font-weight: 700; }
+                        header { text-align: center; border-bottom: 1px solid #e5e5e5; padding-bottom: 20px; margin-bottom: 20px; }
+                        header h1 { font-size: 1.8em; margin-bottom: 6px; }
+                        header p { font-size: 0.9em; color: #666666; }
+                        .config-box { background: #f5f5f7; border-left: 3px solid #0071e3; padding: 12px; margin-bottom: 20px; font-size: 0.9em; }
+                        .config-title { font-size: 0.8em; color: #666666; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+                        .config-value { font-size: 1em; color: #1d1d1d; }
+                        .section-title { font-size: 1.2em; font-weight: 700; margin: 20px 0 12px 0; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px; }
+                        .param-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9em; }
+                        .param-label { color: #666666; }
+                        .param-value { font-weight: 700; }
+                        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+                        .result-box { background: #f5f5f7; padding: 12px; border-radius: 6px; }
+                        .result-label { font-size: 0.75em; color: #666666; text-transform: uppercase; margin-bottom: 4px; }
+                        .result-value { font-size: 1.4em; font-weight: 700; color: #1d1d1d; }
+                        .result-total { background: #0071e3; color: white; grid-column: 1 / -1; }
+                        .result-total .result-label { color: rgba(255,255,255,0.8); }
+                        .result-total .result-value { color: white; font-size: 1.8em; }
+                        .breakdown { background: #f5f5f7; padding: 10px; border-radius: 4px; font-size: 0.85em; color: #666666; margin-bottom: 20px; line-height: 1.5; }
+                        .nota-bene { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 10px; border-radius: 4px; font-size: 0.8em; color: #78350f; line-height: 1.5; }
+                        .nota-bene strong { display: block; margin-bottom: 6px; color: #92400e; }
+                        .nota-bene ul { margin: 0; padding-left: 16px; }
+                        .nota-bene li { margin-bottom: 3px; }
+                        .date { text-align: center; font-size: 0.85em; color: #666666; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e5e5; }
                     </style>
                 </head>
                 <body>
-                    <div class="header">
+                    <header>
                         <h1>Simulateur de Salaire</h1>
-                        <p>Catherine ZACCARDI | ${new Date().toLocaleDateString('fr-FR')}</p>
+                        <p>Catherine ZACCARDI | Yerres (91330)</p>
+                    </header>
+
+                    <div class="config-box">
+                        <div class="config-title">Configuration :</div>
+                        <div class="config-value">${daysLabel} | ${timeRange}</div>
                     </div>
-                    <div class="section">
-                        <h3>Paramètres</h3>
-                        <div class="row"><span>${daysPerWeek} jours/semaine</span><span>${startTime} - ${endTime}</span></div>
-                        <div class="row"><span>Taux horaire</span><span>${hourlyRateNormal}€/h</span></div>
+
+                    <div class="section-title">Paramètres</div>
+                    <div class="param-row">
+                        <span class="param-label">Jours/semaine :</span>
+                        <span class="param-value">${daysPerWeek} jours</span>
                     </div>
-                    <div class="section">
-                        <h3>Résultats</h3>
-                        <div class="row"><span>Salaire mensuel</span><span>${monthlyTotal.toFixed(2)}€</span></div>
-                        <div class="row"><span>Salaire annuel</span><span>${annualTotal.toFixed(2)}€</span></div>
+                    <div class="param-row">
+                        <span class="param-label">Horaires :</span>
+                        <span class="param-value">${startTime} - ${endTime}</span>
                     </div>
+                    <div class="param-row">
+                        <span class="param-label">Heures/jour :</span>
+                        <span class="param-value">${hoursPerDay.toFixed(1)}h</span>
+                    </div>
+                    <div class="param-row">
+                        <span class="param-label">Heures/semaine :</span>
+                        <span class="param-value">${totalWeeklyHours.toFixed(1)}h</span>
+                    </div>
+                    <div class="param-row">
+                        <span class="param-label">Taux horaire :</span>
+                        <span class="param-value">${hourlyRateNormal}€/h</span>
+                    </div>
+                    <div class="param-row">
+                        <span class="param-label">Indemnité entretien :</span>
+                        <span class="param-value">${dailyMaintenance}€/jour</span>
+                    </div>
+                    <div class="param-row">
+                        <span class="param-label">Indemnité repas :</span>
+                        <span class="param-value">${dailyMeal}€/jour</span>
+                    </div>
+
+                    <div class="section-title">Résultats</div>
+                    <div class="breakdown">
+                        <strong>Mensualisation :</strong> (${totalWeeklyHours.toFixed(1)}h/semaine × 52 semaines) ÷ 12 mois = ${monthlyHours.toFixed(1)}h/mois
+                    </div>
+
+                    <div class="result-grid">
+                        <div class="result-box">
+                            <div class="result-label">Salaire horaire</div>
+                            <div class="result-value">${monthlySalary.toFixed(2)}€</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label">Indemnité entretien</div>
+                            <div class="result-value">${totalMaintenance.toFixed(0)}€</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label">Indemnité repas</div>
+                            <div class="result-value">${totalMeal.toFixed(0)}€</div>
+                        </div>
+                        <div class="result-box result-total">
+                            <div class="result-label">NET MENSUEL</div>
+                            <div class="result-value">${monthlyTotal.toFixed(2)}€</div>
+                        </div>
+                    </div>
+
+                    <div class="breakdown">
+                        <strong>Détail mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyDays} × ${(dailyMaintenance + dailyMeal).toFixed(2)}€ = ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
+                    </div>
+
+                    <div class="nota-bene">
+                        <strong>⚠️ À noter :</strong>
+                        <ul>
+                            <li>Le salaire étant annualisé, les congés comptent comme des jours travaillés et ne sont pas décomptés des jours d'activité</li>
+                            <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistance</li>
+                            <li>Les indemnités (repas & entretien) sont uniquement dues sur les jours travaillés</li>
+                        </ul>
+                    </div>
+
+                    <div class="date">${new Date().toLocaleDateString('fr-FR')}</div>
                 </body>
                 </html>
             `;
 
-            const printWindow = window.open('', '', 'height=600,width=800');
+            const printWindow = window.open('', '', 'height=800,width=900');
             printWindow.document.write(htmlContent);
             printWindow.document.close();
             setTimeout(() => printWindow.print(), 250);
