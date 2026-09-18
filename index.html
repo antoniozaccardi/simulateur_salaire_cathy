@@ -367,13 +367,15 @@
                 <strong>Mensualisation :</strong> (${totalWeeklyHours.toFixed(1)}h/semaine × 52 semaines) ÷ 12 mois = ${monthlyHours.toFixed(1)}h/mois
             `;
 
+            const dailyAllowance = dailyMaintenance + dailyMeal;
+
             if (period === 'monthly') {
                 document.getElementById('detailedCalculation').innerHTML = `
-                    <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
+                    <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyDays} × ${dailyAllowance.toFixed(2)}€ = ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
                 `;
             } else {
                 document.getElementById('detailedCalculation').innerHTML = `
-                    <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
+                    <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualDays} × ${dailyAllowance.toFixed(2)}€ = ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
                 `;
             }
         }
