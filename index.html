@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulateur de Salaire - Catherine ZACCARDI</title>
+    <title>Simulateur de Salaire</title>
     <style>
         * {
             margin: 0;
@@ -12,53 +12,64 @@
         }
 
         body {
-            font-family: 'Consolas', 'Monaco', monospace;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #ffffff;
             min-height: 100vh;
-            padding: 15px;
+            color: #1d1d1d;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 980px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
         header {
             text-align: center;
-            color: white;
-            margin-bottom: 15px;
+            padding: 60px 0 40px;
+            border-bottom: 1px solid #e5e5e5;
         }
 
         header h1 {
-            font-size: 1.2em;
-            margin-bottom: 3px;
+            font-size: 2.4em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
 
         header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+            font-size: 1.1em;
+            color: #666666;
         }
 
         .params-panel {
-            background: white;
-            border-radius: 10px;
-            padding: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            margin-bottom: 10px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 40px 0;
         }
 
         .params-panel h2 {
-            color: #667eea;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #667eea;
+            color: #1d1d1d;
+            font-size: 1.4em;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .config-info {
+            background: white;
+            border: 1px solid #e5e5e5;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #666666;
         }
 
         .params-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
         }
 
         .param-item {
@@ -67,141 +78,142 @@
         }
 
         .param-item label {
-            font-size: 0.75em;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 2px;
+            font-size: 0.85em;
+            color: #666666;
+            font-weight: 500;
+            margin-bottom: 6px;
         }
 
         .param-item input,
         .param-item select {
-            padding: 5px;
-            border: 1.5px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.85em;
+            padding: 8px 12px;
+            border: 1px solid #d5d5d7;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-family: inherit;
+            background: white;
         }
 
         .param-item input:focus,
         .param-item select:focus {
             outline: none;
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        .config-info {
-            background: #e8f4f8;
-            border-left: 3px solid #3498db;
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 3px;
-            font-size: 0.8em;
-            color: #2980b9;
+            border-color: #0071e3;
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
         }
 
         .results-panel {
             background: white;
-            border-radius: 10px;
-            padding: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin: 40px 0 60px;
         }
 
         .results-panel h2 {
-            color: #667eea;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #667eea;
+            color: #1d1d1d;
+            font-size: 1.4em;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .period-select {
+            margin-bottom: 24px;
+        }
+
+        .period-select select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d5d5d7;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-family: inherit;
+            background: white;
         }
 
         .results-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .result-box {
-            background: #f8f9fa;
-            padding: 8px;
-            border-radius: 4px;
-            border-left: 3px solid #667eea;
+            background: #f5f5f7;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
         }
 
         .result-label {
-            font-size: 0.75em;
-            color: #666;
+            font-size: 0.85em;
+            color: #666666;
             font-weight: 500;
-            margin-bottom: 2px;
+            margin-bottom: 8px;
         }
 
         .result-value {
-            font-size: 1.3em;
+            font-size: 1.8em;
             font-weight: 700;
-            color: #333;
+            color: #1d1d1d;
         }
 
         .result-box.total {
-            background: #667eea;
+            background: #0071e3;
             color: white;
             border: none;
             grid-column: 1 / -1;
         }
 
         .result-box.total .result-label {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255,255,255,0.8);
         }
 
         .result-box.total .result-value {
             color: white;
-            font-size: 1.8em;
-        }
-
-        .period-select {
-            margin-bottom: 10px;
-        }
-
-        .period-select select {
-            width: 100%;
-            padding: 6px;
-            border: 1.5px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.85em;
+            font-size: 2.4em;
         }
 
         .calculations {
-            background: #f0f4ff;
-            border-left: 3px solid #667eea;
-            padding: 8px;
-            font-size: 0.8em;
-            color: #555;
-            line-height: 1.4;
-            margin-top: 8px;
-            border-radius: 3px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 0.85em;
+            color: #666666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            border: 1px solid #e5e5e5;
         }
 
         .calculations strong {
-            color: #667eea;
+            color: #1d1d1d;
+            font-weight: 600;
         }
 
         .export-btn {
             width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px;
+            background: #0071e3;
             color: white;
             border: none;
             border-radius: 6px;
-            font-size: 0.85em;
-            font-weight: 600;
+            font-size: 1em;
+            font-weight: 500;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: background 0.2s, transform 0.2s;
+            font-family: inherit;
         }
 
         .export-btn:hover {
-            transform: translateY(-1px);
+            background: #0077ed;
+            transform: scale(1.01);
         }
 
         @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .params-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .results-grid {
                 grid-template-columns: 1fr;
             }
