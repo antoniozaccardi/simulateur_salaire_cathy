@@ -74,6 +74,7 @@
         }
 
         input[type="number"],
+        input[type="time"],
         select {
             width: 100%;
             padding: 12px;
@@ -84,24 +85,10 @@
         }
 
         input[type="number"]:focus,
+        input[type="time"]:focus,
         select:focus {
             outline: none;
             border-color: #667eea;
-        }
-
-        .input-suffix {
-            position: relative;
-        }
-
-        .input-suffix::after {
-            content: attr(data-suffix);
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 0.9em;
-            pointer-events: none;
         }
 
         .row {
@@ -233,6 +220,15 @@
                 margin: 0;
             }
         }
+
+        .calculated-value {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            color: #666;
+            border-left: 3px solid #667eea;
+        }
     </style>
 </head>
 <body>
@@ -272,7 +268,7 @@
 
                 <div class="form-group">
                     <label>Heures par jour (calculées)</label>
-                    <div style="background: #f5f5f5; padding: 12px; border-radius: 6px; font-size: 0.95em; color: #666; border-left: 3px solid #667eea;">
+                    <div class="calculated-value">
                         <strong id="calculatedHours">9.0</strong> heures
                     </div>
                 </div>
@@ -280,13 +276,8 @@
                 <hr style="margin: 30px 0; border: none; border-top: 2px solid #e0e0e0;">
 
                 <div class="form-group">
-                    <label for="hourlyRateNormal">Taux horaire Net - Heures normales (€)</label>
+                    <label for="hourlyRateNormal">Taux horaire Net (€/h)</label>
                     <input type="number" id="hourlyRateNormal" value="3.75" step="0.01" min="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="hourlyRateSup">Taux horaire Net - Heures sup (€)</label>
-                    <input type="number" id="hourlyRateSup" value="5.63" step="0.01" min="0">
                 </div>
 
                 <hr style="margin: 30px 0; border: none; border-top: 2px solid #e0e0e0;">
@@ -308,33 +299,23 @@
 
                 <div class="result-section">
                     <div class="result-item">
-                        <span class="result-label">Heures normales / semaine</span>
-                        <span class="result-value" id="weeklyNormalHours">36</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Heures sup / semaine</span>
-                        <span class="result-value" id="weeklyOvertimeHours">0</span>
+                        <span class="result-label">Heures par semaine</span>
+                        <span class="result-value" id="weeklyHours">36</span>
                     </div>
                 </div>
 
-                <div class="calculation-detail" id="weeklyDetail"></div>
-
                 <div class="result-section">
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #667eea;">Période</label>
-                        <select id="period" style="width: 100%; padding: 10px; border: 2px solid #667eea; border-radius: 6px;">
-                            <option value="monthly">Mensuel (moyenne annuelle)</option>
-                            <option value="annual">Annuel</option>
-                        </select>
+                    <div class="result-item">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #667eea; width: 100%;">Période</label>
                     </div>
+                    <select id="period" style="width: 100%; padding: 10px; border: 2px solid #667eea; border-radius: 6px; margin-bottom: 15px;">
+                        <option value="monthly">Mensuel (moyenne annuelle)</option>
+                        <option value="annual">Annuel</option>
+                    </select>
 
                     <div class="result-item">
-                        <span class="result-label">Salaire heures normales</span>
-                        <span class="result-value" id="salaryNormal">0 €</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Salaire heures sup</span>
-                        <span class="result-value" id="salarySup">0 €</span>
+                        <span class="result-label">Salaire horaire</span>
+                        <span class="result-value" id="salary">0 €</span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Indemnités</span>
@@ -363,7 +344,6 @@
             startTime: document.getElementById('startTime'),
             endTime: document.getElementById('endTime'),
             hourlyRateNormal: document.getElementById('hourlyRateNormal'),
-            hourlyRateSup: document.getElementById('hourlyRateSup'),
             dailyMaintenance: document.getElementById('dailyMaintenance'),
             dailyMeal: document.getElementById('dailyMeal'),
         };
@@ -371,17 +351,6 @@
         const daysLabels = {
             4: 'Lun, Mar, Jeu, Ven',
             5: 'Lun - Ven'
-        };
-
-        const results = {
-            weeklyNormalHours: document.getElementById('weeklyNormalHours'),
-            weeklyOvertimeHours: document.getElementById('weeklyOvertimeHours'),
-            monthlySalaryNormal: document.getElementById('monthlySalaryNormal'),
-            monthlySalarySup: document.getElementById('monthlySalarySup'),
-            monthlyAllowances: document.getElementById('monthlyAllowances'),
-            totalNet: document.getElementById('totalNet'),
-            weeklyDetail: document.getElementById('weeklyDetail'),
-            monthlyDetail: document.getElementById('monthlyDetail'),
         };
 
         function calculate() {
@@ -404,75 +373,54 @@
             document.getElementById('configHours').textContent = timeRange;
 
             const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
-            const hourlyRateSup = parseFloat(inputs.hourlyRateSup.value);
             const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
             const dailyMeal = parseFloat(inputs.dailyMeal.value);
             const period = document.getElementById('period').value;
 
             // Calculs hebdomadaires
             const totalWeeklyHours = daysPerWeek * hoursPerDay;
-            const weeklyNormalHours = Math.min(totalWeeklyHours, 35);
-            const weeklyOvertimeHours = Math.max(0, totalWeeklyHours - 35);
 
             // Calculs mensuels (52 semaines / 12 mois = 4.333 semaines/mois)
-            const monthlyNormalHours = (weeklyNormalHours * 52) / 12;
-            const monthlyOvertimeHours = (weeklyOvertimeHours * 52) / 12;
+            const monthlyHours = (totalWeeklyHours * 52) / 12;
             const monthlyDays = daysPerWeek === 4 ? 18 : 22;
 
             // Calculs annuels
-            const annualNormalHours = weeklyNormalHours * 52;
-            const annualOvertimeHours = weeklyOvertimeHours * 52;
+            const annualHours = totalWeeklyHours * 52;
             const annualDays = monthlyDays * 12;
 
             // Salaires mensuels
-            const monthlySalaryNormal = monthlyNormalHours * hourlyRateNormal;
-            const monthlySalarySup = monthlyOvertimeHours * hourlyRateSup;
+            const monthlySalary = monthlyHours * hourlyRateNormal;
             const monthlyAllowances = (dailyMaintenance + dailyMeal) * monthlyDays;
-            const monthlyTotal = monthlySalaryNormal + monthlySalarySup + monthlyAllowances;
+            const monthlyTotal = monthlySalary + monthlyAllowances;
 
             // Salaires annuels
-            const annualSalaryNormal = annualNormalHours * hourlyRateNormal;
-            const annualSalarySup = annualOvertimeHours * hourlyRateSup;
+            const annualSalary = annualHours * hourlyRateNormal;
             const annualAllowances = (dailyMaintenance + dailyMeal) * annualDays;
-            const annualTotal = annualSalaryNormal + annualSalarySup + annualAllowances;
+            const annualTotal = annualSalary + annualAllowances;
 
             // Affichage selon la période
-            let displaySalaryNormal, displaySalarySup, displayAllowances, displayTotal, periodLabel;
+            let displaySalary, displayAllowances, displayTotal, periodLabel;
 
             if (period === 'monthly') {
-                displaySalaryNormal = monthlySalaryNormal;
-                displaySalarySup = monthlySalarySup;
+                displaySalary = monthlySalary;
                 displayAllowances = monthlyAllowances;
                 displayTotal = monthlyTotal;
                 periodLabel = '💰 NET MENSUEL';
             } else {
-                displaySalaryNormal = annualSalaryNormal;
-                displaySalarySup = annualSalarySup;
+                displaySalary = annualSalary;
                 displayAllowances = annualAllowances;
                 displayTotal = annualTotal;
                 periodLabel = '💰 NET ANNUEL';
             }
 
             // Mise à jour des résultats
-            results.weeklyNormalHours.textContent = weeklyNormalHours.toFixed(1);
-            results.weeklyOvertimeHours.textContent = weeklyOvertimeHours.toFixed(1);
-            results.salaryNormal = displaySalaryNormal;
-            results.salarySup = displaySalarySup;
-            results.allowances = displayAllowances;
-            document.getElementById('salaryNormal').textContent = displaySalaryNormal.toFixed(2) + ' €';
-            document.getElementById('salarySup').textContent = displaySalarySup.toFixed(2) + ' €';
+            document.getElementById('weeklyHours').textContent = totalWeeklyHours.toFixed(1);
+            document.getElementById('salary').textContent = displaySalary.toFixed(2) + ' €';
             document.getElementById('allowances').textContent = displayAllowances.toFixed(2) + ' €';
             document.getElementById('totalLabel').textContent = periodLabel;
-            results.totalNet.textContent = displayTotal.toFixed(2) + ' €';
+            document.getElementById('totalNet').textContent = displayTotal.toFixed(2) + ' €';
 
             // Détails de calcul
-            results.weeklyDetail.innerHTML = `
-                <strong>📅 Calcul hebdomadaire :</strong><br>
-                ${daysPerWeek} jours × ${hoursPerDay}h/jour = <strong>${totalWeeklyHours}</strong>h/semaine<br>
-                → <strong>${weeklyNormalHours.toFixed(1)}h normales</strong> (max 35h) + <strong>${weeklyOvertimeHours.toFixed(1)}h supplémentaires</strong>
-            `;
-
-            // Explication de la méthodologie
             document.getElementById('methodDetail').innerHTML = `
                 <strong>📊 Méthodologie :</strong><br>
                 <strong>Mensuel :</strong> Moyenne annuelle = (Heures/semaine × 52) ÷ 12 mois<br>
@@ -484,9 +432,8 @@
             if (period === 'monthly') {
                 document.getElementById('detailedCalculation').innerHTML = `
                     <strong>🔢 Détail du calcul MENSUEL :</strong><br>
-                    <strong>Heures :</strong> ${monthlyNormalHours.toFixed(1)}h normales + ${monthlyOvertimeHours.toFixed(1)}h sup<br>
-                    <strong>Heures normales :</strong> ${monthlyNormalHours.toFixed(1)}h × ${hourlyRateNormal}€/h = <strong>${monthlySalaryNormal.toFixed(2)}€</strong><br>
-                    <strong>Heures sup :</strong> ${monthlyOvertimeHours.toFixed(1)}h × ${hourlyRateSup}€/h = <strong>${monthlySalarySup.toFixed(2)}€</strong><br>
+                    <strong>Heures :</strong> ${monthlyHours.toFixed(1)}h<br>
+                    <strong>Salaire :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€/h = <strong>${monthlySalary.toFixed(2)}€</strong><br>
                     <strong>Indemnités :</strong> ${monthlyDays} jours × ${(dailyMaintenance + dailyMeal).toFixed(2)}€/jour = <strong>${monthlyAllowances.toFixed(2)}€</strong><br>
                     <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;">
                     <strong style="color: #667eea;">TOTAL MENSUEL : ${monthlyTotal.toFixed(2)}€</strong><br>
@@ -495,9 +442,8 @@
             } else {
                 document.getElementById('detailedCalculation').innerHTML = `
                     <strong>🔢 Détail du calcul ANNUEL :</strong><br>
-                    <strong>Heures :</strong> ${annualNormalHours.toFixed(1)}h normales + ${annualOvertimeHours.toFixed(1)}h sup<br>
-                    <strong>Heures normales :</strong> ${annualNormalHours.toFixed(1)}h × ${hourlyRateNormal}€/h = <strong>${annualSalaryNormal.toFixed(2)}€</strong><br>
-                    <strong>Heures sup :</strong> ${annualOvertimeHours.toFixed(1)}h × ${hourlyRateSup}€/h = <strong>${annualSalarySup.toFixed(2)}€</strong><br>
+                    <strong>Heures :</strong> ${annualHours.toFixed(1)}h<br>
+                    <strong>Salaire :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€/h = <strong>${annualSalary.toFixed(2)}€</strong><br>
                     <strong>Indemnités :</strong> ${annualDays} jours × ${(dailyMaintenance + dailyMeal).toFixed(2)}€/jour = <strong>${annualAllowances.toFixed(2)}€</strong><br>
                     <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0;">
                     <strong style="color: #667eea;">TOTAL ANNUEL : ${annualTotal.toFixed(2)}€</strong><br>
@@ -517,24 +463,30 @@
         // Export PDF
         document.getElementById('exportPdf').addEventListener('click', function() {
             const daysPerWeek = parseInt(inputs.daysPerWeek.value);
-            const hoursPerDay = parseFloat(inputs.hoursPerDay.value);
+            const startTime = inputs.startTime.value;
+            const endTime = inputs.endTime.value;
             const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
-            const hourlyRateSup = parseFloat(inputs.hourlyRateSup.value);
             const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
             const dailyMeal = parseFloat(inputs.dailyMeal.value);
 
+            const [startHour, startMin] = startTime.split(':').map(Number);
+            const [endHour, endMin] = endTime.split(':').map(Number);
+            const startTotalMin = startHour * 60 + startMin;
+            const endTotalMin = endHour * 60 + endMin;
+            const hoursPerDay = (endTotalMin - startTotalMin) / 60;
+
             const totalWeeklyHours = daysPerWeek * hoursPerDay;
-            const weeklyNormalHours = Math.min(totalWeeklyHours, 35);
-            const weeklyOvertimeHours = Math.max(0, totalWeeklyHours - 35);
-
-            const monthlyNormalHours = (weeklyNormalHours * 52) / 12;
-            const monthlyOvertimeHours = (weeklyOvertimeHours * 52) / 12;
+            const monthlyHours = (totalWeeklyHours * 52) / 12;
             const monthlyDays = daysPerWeek === 4 ? 18 : 22;
-
-            const monthlySalaryNormal = monthlyNormalHours * hourlyRateNormal;
-            const monthlySalarySup = monthlyOvertimeHours * hourlyRateSup;
+            const monthlySalary = monthlyHours * hourlyRateNormal;
             const monthlyAllowances = (dailyMaintenance + dailyMeal) * monthlyDays;
-            const totalNet = monthlySalaryNormal + monthlySalarySup + monthlyAllowances;
+            const monthlyTotal = monthlySalary + monthlyAllowances;
+
+            const annualHours = totalWeeklyHours * 52;
+            const annualDays = monthlyDays * 12;
+            const annualSalary = annualHours * hourlyRateNormal;
+            const annualAllowances = (dailyMaintenance + dailyMeal) * annualDays;
+            const annualTotal = annualSalary + annualAllowances;
 
             const htmlContent = `
                 <!DOCTYPE html>
@@ -542,100 +494,26 @@
                 <head>
                     <meta charset="UTF-8">
                     <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            padding: 20px;
-                            color: #333;
-                        }
-                        .header {
-                            border-bottom: 3px solid #667eea;
-                            padding-bottom: 15px;
-                            margin-bottom: 20px;
-                            text-align: center;
-                        }
-                        .header h1 {
-                            margin: 0;
-                            color: #667eea;
-                            font-size: 24px;
-                        }
-                        .header p {
-                            margin: 5px 0;
-                            color: #666;
-                            font-size: 12px;
-                        }
-                        .date {
-                            text-align: right;
-                            font-size: 11px;
-                            color: #999;
-                            margin-bottom: 15px;
-                        }
-                        .section {
-                            margin-bottom: 20px;
-                            page-break-inside: avoid;
-                        }
-                        .section-title {
-                            background: #667eea;
-                            color: white;
-                            padding: 10px;
-                            margin-bottom: 10px;
-                            font-weight: bold;
-                            font-size: 12px;
-                            border-radius: 3px;
-                        }
-                        .parameters {
-                            background: #f5f5f5;
-                            padding: 10px;
-                            font-size: 11px;
-                            border-left: 3px solid #667eea;
-                        }
-                        .param-row {
-                            display: flex;
-                            justify-content: space-between;
-                            padding: 5px 0;
-                            border-bottom: 1px solid #ddd;
-                        }
-                        .param-row:last-child {
-                            border-bottom: none;
-                        }
-                        .param-label {
-                            font-weight: 500;
-                        }
-                        .results-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            font-size: 11px;
-                        }
-                        .results-table td {
-                            padding: 8px;
-                            border-bottom: 1px solid #ddd;
-                        }
-                        .results-table td:first-child {
-                            font-weight: 500;
-                            width: 60%;
-                        }
-                        .results-table td:last-child {
-                            text-align: right;
-                            font-weight: 600;
-                        }
-                        .results-table tr.total-row {
-                            background: #667eea;
-                            color: white;
-                            font-size: 13px;
-                            font-weight: bold;
-                        }
-                        .results-table tr.total-row td {
-                            border-bottom: none;
-                            padding: 10px 8px;
-                        }
-                        .detail-box {
-                            background: #f0f4ff;
-                            padding: 10px;
-                            margin-top: 10px;
-                            border-left: 3px solid #667eea;
-                            font-size: 10px;
-                            line-height: 1.4;
-                            color: #555;
-                        }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: Arial, sans-serif; padding: 20px; color: #333; background: white; }
+                        @media print { body { padding: 0; } }
+                        .header { border-bottom: 3px solid #667eea; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
+                        .header h1 { margin: 0; color: #667eea; font-size: 24px; }
+                        .header p { margin: 5px 0; color: #666; font-size: 12px; }
+                        .date { text-align: right; font-size: 11px; color: #999; margin-bottom: 15px; }
+                        .section { margin-bottom: 20px; page-break-inside: avoid; }
+                        .section-title { background: #667eea; color: white; padding: 10px; margin-bottom: 10px; font-weight: bold; font-size: 12px; }
+                        .parameters { background: #f5f5f5; padding: 10px; font-size: 11px; border-left: 3px solid #667eea; }
+                        .param-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #ddd; }
+                        .param-row:last-child { border-bottom: none; }
+                        .param-label { font-weight: 500; }
+                        .results-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+                        .results-table td { padding: 8px; border-bottom: 1px solid #ddd; }
+                        .results-table td:first-child { font-weight: 500; width: 60%; }
+                        .results-table td:last-child { text-align: right; font-weight: 600; }
+                        .results-table tr.total-row { background: #667eea; color: white; font-size: 13px; font-weight: bold; }
+                        .results-table tr.total-row td { border-bottom: none; padding: 10px 8px; }
+                        .detail-box { background: #f0f4ff; padding: 10px; margin-top: 10px; border-left: 3px solid #667eea; font-size: 10px; line-height: 1.4; color: #555; }
                     </style>
                 </head>
                 <body>
@@ -653,16 +531,16 @@
                                 <span>${daysPerWeek} jours</span>
                             </div>
                             <div class="param-row">
-                                <span class="param-label">Heures travaillées par jour</span>
-                                <span>${hoursPerDay}h</span>
+                                <span class="param-label">Horaires</span>
+                                <span>${startTime} - ${endTime}</span>
                             </div>
                             <div class="param-row">
-                                <span class="param-label">Taux horaire Net (heures normales)</span>
+                                <span class="param-label">Heures par jour</span>
+                                <span>${hoursPerDay.toFixed(1)}h</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Taux horaire Net</span>
                                 <span>${hourlyRateNormal.toFixed(2)}€/h</span>
-                            </div>
-                            <div class="param-row">
-                                <span class="param-label">Taux horaire Net (heures sup)</span>
-                                <span>${hourlyRateSup.toFixed(2)}€/h</span>
                             </div>
                             <div class="param-row">
                                 <span class="param-label">Indemnité entretien</span>
@@ -676,51 +554,50 @@
                     </div>
 
                     <div class="section">
-                        <div class="section-title">📊 CALCULS HEBDOMADAIRES</div>
+                        <div class="section-title">📊 CALCULS</div>
                         <div class="detail-box">
-                            ${daysPerWeek} jours × ${hoursPerDay}h/jour = <strong>${totalWeeklyHours}h/semaine</strong><br>
-                            → <strong>${weeklyNormalHours.toFixed(1)}h normales</strong> + <strong>${weeklyOvertimeHours.toFixed(1)}h supplémentaires</strong>
+                            <strong>Hebdomadaire :</strong> ${daysPerWeek} jours × ${hoursPerDay.toFixed(1)}h = <strong>${totalWeeklyHours.toFixed(1)}h/semaine</strong><br>
+                            <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h/mois (moyenne annuelle)<br>
+                            <strong>Annuel :</strong> ${annualHours.toFixed(1)}h/an
                         </div>
                     </div>
 
                     <div class="section">
-                        <div class="section-title">💵 RÉSULTATS MENSUELS</div>
+                        <div class="section-title">💵 RÉSULTATS</div>
                         <table class="results-table">
                             <tr>
-                                <td>Heures normales</td>
-                                <td>${monthlyNormalHours.toFixed(1)}h × ${hourlyRateNormal.toFixed(2)}€</td>
-                            </tr>
-                            <tr>
+                                <td><strong>MENSUEL</strong></td>
                                 <td></td>
-                                <td>${monthlySalaryNormal.toFixed(2)}€</td>
                             </tr>
                             <tr>
-                                <td>Heures supplémentaires</td>
-                                <td>${monthlyOvertimeHours.toFixed(1)}h × ${hourlyRateSup.toFixed(2)}€</td>
+                                <td>Salaire horaire</td>
+                                <td>${monthlySalary.toFixed(2)}€</td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td>${monthlySalarySup.toFixed(2)}€</td>
-                            </tr>
-                            <tr>
-                                <td>Indemnités (${monthlyDays} jours × ${(dailyMaintenance + dailyMeal).toFixed(2)}€)</td>
+                                <td>Indemnités</td>
                                 <td>${monthlyAllowances.toFixed(2)}€</td>
                             </tr>
                             <tr class="total-row">
-                                <td>NET GLOBAL</td>
-                                <td>${totalNet.toFixed(2)}€</td>
+                                <td>NET MENSUEL</td>
+                                <td>${monthlyTotal.toFixed(2)}€</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ANNUEL</strong></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Salaire horaire</td>
+                                <td>${annualSalary.toFixed(2)}€</td>
+                            </tr>
+                            <tr>
+                                <td>Indemnités</td>
+                                <td>${annualAllowances.toFixed(2)}€</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>NET ANNUEL</td>
+                                <td>${annualTotal.toFixed(2)}€</td>
                             </tr>
                         </table>
-                    </div>
-
-                    <div class="section">
-                        <div class="detail-box">
-                            <strong>Détail du calcul :</strong><br>
-                            Salaire heures normales : ${monthlySalaryNormal.toFixed(2)}€<br>
-                            Salaire heures sup : ${monthlySalarySup.toFixed(2)}€<br>
-                            Indemnités mensuelles : ${monthlyAllowances.toFixed(2)}€<br>
-                            = <strong>${totalNet.toFixed(2)}€ NET MENSUEL</strong>
-                        </div>
                     </div>
                 </body>
                 </html>
