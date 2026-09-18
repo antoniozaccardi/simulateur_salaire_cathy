@@ -290,6 +290,14 @@
                     <div class="result-label">Salaire horaire</div>
                     <div class="result-value" id="salary">0 €</div>
                 </div>
+                <div class="result-box">
+                    <div class="result-label">Indemnité entretien</div>
+                    <div class="result-value" id="maintenanceTotal">0 €</div>
+                </div>
+                <div class="result-box">
+                    <div class="result-label">Indemnité repas</div>
+                    <div class="result-value" id="mealTotal">0 €</div>
+                </div>
                 <div class="result-box total">
                     <div class="result-label" id="totalLabel">NET GLOBAL</div>
                     <div class="result-value" id="totalNet">0 €</div>
@@ -370,7 +378,12 @@
                 periodLabel = 'NET ANNUEL';
             }
 
+            const totalMaintenance = dailyMaintenance * monthlyDays;
+            const totalMeal = dailyMeal * monthlyDays;
+
             document.getElementById('salary').textContent = displaySalary.toFixed(2) + ' €';
+            document.getElementById('maintenanceTotal').textContent = totalMaintenance.toFixed(2) + ' €';
+            document.getElementById('mealTotal').textContent = totalMeal.toFixed(2) + ' €';
             document.getElementById('totalLabel').textContent = periodLabel;
             document.getElementById('totalNet').textContent = displayTotal.toFixed(2) + ' €';
 
