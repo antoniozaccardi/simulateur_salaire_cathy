@@ -158,12 +158,13 @@
         .calculations {
             background: #f5f5f7;
             border-radius: 12px;
-            padding: 16px;
-            font-size: 0.85em;
+            padding: 20px;
+            font-size: 1em;
             color: #666666;
             line-height: 1.6;
             margin-bottom: 24px;
             border: 1px solid #e5e5e5;
+            text-align: center;
         }
 
         .calculations strong {
@@ -239,7 +240,7 @@
 
                 <div class="param-item">
                     <label>Heures/jour</label>
-                    <div style="padding: 5px; background: #f5f5f5; border-radius: 4px; font-weight: 600; font-size: 0.9em; text-align: center;">
+                    <div style="padding: 8px 12px; background: white; border: 1px solid #d5d5d7; border-radius: 6px; font-weight: 600; font-size: 0.9em; text-align: center;">
                         <span id="calculatedHours">9.0</span>h
                     </div>
                 </div>
@@ -250,12 +251,12 @@
                 </div>
 
                 <div class="param-item">
-                    <label>Indemnité entretien</label>
+                    <label>Indemnité entretien (€)</label>
                     <input type="number" id="dailyMaintenance" value="4.0" step="0.01">
                 </div>
 
                 <div class="param-item">
-                    <label>Indemnité repas</label>
+                    <label>Indemnité repas (€)</label>
                     <input type="number" id="dailyMeal" value="1.0" step="0.01">
                 </div>
             </div>
@@ -263,8 +264,6 @@
 
         <!-- RÉSULTATS EN BAS -->
         <div class="results-panel">
-            <h2>Salaire mensualisé</h2>
-
             <div class="calculations" id="monthlyExplanation" style="margin-bottom: 24px;"></div>
 
             <div class="results-grid">
