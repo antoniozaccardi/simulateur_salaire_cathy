@@ -113,20 +113,6 @@
             font-weight: 600;
         }
 
-        .period-select {
-            margin-bottom: 24px;
-        }
-
-        .period-select select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d5d5d7;
-            border-radius: 6px;
-            font-size: 0.95em;
-            font-family: inherit;
-            background: white;
-        }
-
         .results-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -280,13 +266,6 @@
         <div class="results-panel">
             <h2>📊 Résultats</h2>
 
-            <div class="period-select">
-                <select id="period">
-                    <option value="monthly">Mensuel</option>
-                    <option value="annual">Annuel</option>
-                </select>
-            </div>
-
             <div class="results-grid">
                 <div class="result-box">
                     <div class="result-label">Heures/semaine</div>
@@ -346,7 +325,7 @@
             const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
             const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
             const dailyMeal = parseFloat(inputs.dailyMeal.value);
-            const period = document.getElementById('period').value;
+            const period = 'monthly';
 
             const totalWeeklyHours = daysPerWeek * hoursPerDay;
             const monthlyHours = (totalWeeklyHours * 52) / 12;
@@ -398,8 +377,6 @@
             input.addEventListener('change', calculate);
             input.addEventListener('input', calculate);
         });
-
-        document.getElementById('period').addEventListener('change', calculate);
 
         document.getElementById('exportPdf').addEventListener('click', function() {
             const daysPerWeek = parseInt(inputs.daysPerWeek.value);
