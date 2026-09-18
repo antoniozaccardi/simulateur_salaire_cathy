@@ -1,0 +1,5 @@
+name = "simulateur-salaire-cathy"
+type = "javascript"
+
+[env.production]
+route = "simulateur-salaire-cathy.pages.dev"
