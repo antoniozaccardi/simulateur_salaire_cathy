@@ -264,7 +264,9 @@
 
         <!-- RÉSULTATS EN BAS -->
         <div class="results-panel">
-            <h2>📊 Résultats</h2>
+            <h2>Salaire mensualisé</h2>
+
+            <div class="calculations" id="monthlyExplanation" style="margin-bottom: 24px;"></div>
 
             <div class="results-grid">
                 <div class="result-box">
@@ -361,6 +363,10 @@
             document.getElementById('allowances').textContent = displayAllowances.toFixed(2) + ' €';
             document.getElementById('totalLabel').textContent = periodLabel;
             document.getElementById('totalNet').textContent = displayTotal.toFixed(2) + ' €';
+
+            document.getElementById('monthlyExplanation').innerHTML = `
+                <strong>Mensualisation :</strong> (${totalWeeklyHours.toFixed(1)}h/semaine × 52 semaines) ÷ 12 mois = ${monthlyHours.toFixed(1)}h/mois
+            `;
 
             if (period === 'monthly') {
                 document.getElementById('detailedCalculation').innerHTML = `
