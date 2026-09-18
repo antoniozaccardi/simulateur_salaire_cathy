@@ -344,7 +344,7 @@
                     <div class="result-value" id="mealTotal">0 €</div>
                 </div>
                 <div class="result-box total">
-                    <div class="result-label" id="totalLabel">NET GLOBAL</div>
+                    <div class="result-label" id="totalLabel">Net Mensuel</div>
                     <div class="result-value" id="totalNet">0 €</div>
                 </div>
             </div>
@@ -428,7 +428,7 @@
                 displaySalary = monthlySalary;
                 displayAllowances = monthlyAllowances;
                 displayTotal = monthlyTotal;
-                periodLabel = 'NET MENSUEL';
+                periodLabel = 'Net Mensuel';
             } else {
                 displaySalary = annualSalary;
                 displayAllowances = annualAllowances;
@@ -439,11 +439,11 @@
             const totalMaintenance = dailyMaintenance * monthlyDays;
             const totalMeal = dailyMeal * monthlyDays;
 
-            document.getElementById('salary').textContent = displaySalary.toFixed(2) + ' €';
+            document.getElementById('salary').textContent = displaySalary.toFixed(0) + ' €';
             document.getElementById('maintenanceTotal').textContent = totalMaintenance.toFixed(0) + ' €';
             document.getElementById('mealTotal').textContent = totalMeal.toFixed(0) + ' €';
             document.getElementById('totalLabel').textContent = periodLabel;
-            document.getElementById('totalNet').textContent = displayTotal.toFixed(2) + ' €';
+            document.getElementById('totalNet').textContent = displayTotal.toFixed(0) + ' €';
 
             document.getElementById('monthlyExplanation').innerHTML = `
                 <strong>Mensualisation :</strong> (${totalWeeklyHours.toFixed(1)}h/semaine × 52 semaines) ÷ 12 mois = ${monthlyHours.toFixed(1)}h/mois
@@ -717,7 +717,7 @@
                             <div class="results-grid">
                                 <div class="result-box">
                                     <div class="result-label">Salaire horaire</div>
-                                    <div class="result-value">${monthlySalary.toFixed(2)} €</div>
+                                    <div class="result-value">${monthlySalary.toFixed(0)} €</div>
                                 </div>
                                 <div class="result-box">
                                     <div class="result-label">Indemnité entretien</div>
@@ -728,8 +728,8 @@
                                     <div class="result-value">${totalMeal.toFixed(0)} €</div>
                                 </div>
                                 <div class="result-box total">
-                                    <div class="result-label">NET MENSUEL</div>
-                                    <div class="result-value">${monthlyTotal.toFixed(2)} €</div>
+                                    <div class="result-label">Net Mensuel</div>
+                                    <div class="result-value">${monthlyTotal.toFixed(0)} €</div>
                                 </div>
                             </div>
 
