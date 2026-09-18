@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Consolas', 'Monaco', monospace;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 15px;
@@ -373,11 +373,11 @@
 
             if (period === 'monthly') {
                 document.getElementById('detailedCalculation').innerHTML = `
-                    <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong> (Annuel : ${annualTotal.toFixed(2)}€)
+                    <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
                 `;
             } else {
                 document.getElementById('detailedCalculation').innerHTML = `
-                    <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong> (Mensuel : ${monthlyTotal.toFixed(2)}€)
+                    <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
                 `;
             }
         }
