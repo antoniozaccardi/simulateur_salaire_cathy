@@ -248,14 +248,14 @@
             }
         }
 
-        .tabs-container {
+        .tabs {
             display: flex;
             gap: 0;
             border-bottom: 2px solid #e5e5e5;
             margin-bottom: 12px;
         }
 
-        .tab-button {
+        .tab-btn {
             padding: 8px 16px;
             background: none;
             border: none;
@@ -268,20 +268,20 @@
             font-family: inherit;
         }
 
-        .tab-button:hover {
+        .tab-btn:hover {
             color: #1d1d1d;
         }
 
-        .tab-button.active {
+        .tab-btn.active {
             color: #0071e3;
             border-bottom-color: #0071e3;
         }
 
-        .tab-content {
+        .tab-pane {
             display: none;
         }
 
-        .tab-content.active {
+        .tab-pane.active {
             display: block;
         }
 
@@ -297,11 +297,6 @@
             .results-grid {
                 grid-template-columns: 1fr 1fr;
             }
-
-            .tab-button {
-                padding: 6px 12px;
-                font-size: 0.9em;
-            }
         }
     </style>
 </head>
@@ -312,13 +307,12 @@
             <p>Catherine ZACCARDI | Yerres (91330)</p>
         </header>
 
-        <div class="tabs-container">
-            <button class="tab-button active" data-tab="enfant1">Enfant1</button>
-            <button class="tab-button" data-tab="enfant2">Enfant2</button>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="noa">Noa</button>
+            <button class="tab-btn" data-tab="enfant2">Enfant2</button>
         </div>
 
-        <!-- ENFANT 1 -->
-        <div id="enfant1" class="tab-content active">
+        <div id="noa" class="tab-pane active">
 
         <!-- PARAMÈTRES EN HAUT -->
         <div class="params-panel">
@@ -394,7 +388,7 @@
                     <div class="result-value" id="mealTotal">0 €</div>
                 </div>
                 <div class="result-box total">
-                    <div class="result-label" id="totalLabel">Net Mensuel</div>
+                    <div class="result-label" id="totalLabel">NET GLOBAL</div>
                     <div class="result-value" id="totalNet">0 €</div>
                 </div>
             </div>
@@ -417,8 +411,7 @@
         </div>
         </div>
 
-        <!-- ENFANT 2 -->
-        <div id="enfant2" class="tab-content">
+        <div id="enfant2" class="tab-pane">
 
         <!-- PARAMÈTRES EN HAUT -->
         <div class="params-panel">
@@ -431,7 +424,7 @@
                     <label>Jours/semaine</label>
                     <select id="daysPerWeek2">
                         <option value="4">4 jours</option>
-                        <option value="5">5 jours</option>
+                        <option value="5" selected>5 jours</option>
                     </select>
                 </div>
 
@@ -494,7 +487,7 @@
                     <div class="result-value" id="mealTotal2">0 €</div>
                 </div>
                 <div class="result-box total">
-                    <div class="result-label" id="totalLabel2">Net Mensuel</div>
+                    <div class="result-label" id="totalLabel2">NET GLOBAL</div>
                     <div class="result-value" id="totalNet2">0 €</div>
                 </div>
             </div>
@@ -520,22 +513,17 @@
 
     <script>
         // Gestion des onglets
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabName = button.getAttribute('data-tab');
-
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-
-                button.classList.add('active');
-                document.getElementById(tabName).classList.add('active');
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tab).classList.add('active');
             });
         });
 
-        // Inputs pour Enfant 1
+        // Inputs Noa
         const inputs = {
             daysPerWeek: document.getElementById('daysPerWeek'),
             startTime: document.getElementById('startTime'),
@@ -545,7 +533,7 @@
             dailyMeal: document.getElementById('dailyMeal'),
         };
 
-        // Inputs pour Enfant 2
+        // Inputs Enfant2
         const inputs2 = {
             daysPerWeek: document.getElementById('daysPerWeek2'),
             startTime: document.getElementById('startTime2'),
@@ -560,9 +548,9 @@
             5: 'Lun - Ven'
         };
 
-        function calculate(childNum = 1) {
-            const inp = childNum === 1 ? inputs : inputs2;
-            const suffix = childNum === 1 ? '' : '2';
+        function calculate(child = 1) {
+            const inp = child === 1 ? inputs : inputs2;
+            const id = child === 1 ? '' : '2';
 
             const daysPerWeek = parseInt(inp.daysPerWeek.value);
 
@@ -574,15 +562,15 @@
             const workMinutes = endTotalMin - startTotalMin;
             const hoursPerDay = workMinutes / 60;
 
-            document.getElementById('calculatedHours' + suffix).textContent = hoursPerDay.toFixed(1);
+            document.getElementById('calculatedHours' + id).textContent = hoursPerDay.toFixed(1);
 
             const totalWeeklyHours = daysPerWeek * hoursPerDay;
-            document.getElementById('paramWeeklyHours' + suffix).textContent = totalWeeklyHours.toFixed(1);
+            document.getElementById('paramWeeklyHours' + id).textContent = totalWeeklyHours.toFixed(1);
 
             const daysLabel = daysLabels[daysPerWeek];
             const timeRange = `${inp.startTime.value.slice(0,5)} - ${inp.endTime.value.slice(0,5)}`;
-            document.getElementById('configDays' + suffix).textContent = daysLabel;
-            document.getElementById('configHours' + suffix).textContent = timeRange;
+            document.getElementById('configDays' + id).textContent = daysLabel;
+            document.getElementById('configHours' + id).textContent = timeRange;
 
             const hourlyRateNormal = parseFloat(inp.hourlyRateNormal.value);
             const dailyMaintenance = parseFloat(inp.dailyMaintenance.value);
@@ -609,7 +597,7 @@
                 displaySalary = monthlySalary;
                 displayAllowances = monthlyAllowances;
                 displayTotal = monthlyTotal;
-                periodLabel = 'Net Mensuel';
+                periodLabel = 'NET MENSUEL';
             } else {
                 displaySalary = annualSalary;
                 displayAllowances = annualAllowances;
@@ -620,24 +608,24 @@
             const totalMaintenance = dailyMaintenance * monthlyDays;
             const totalMeal = dailyMeal * monthlyDays;
 
-            document.getElementById('salary' + suffix).textContent = displaySalary.toFixed(0) + ' €';
-            document.getElementById('maintenanceTotal' + suffix).textContent = totalMaintenance.toFixed(0) + ' €';
-            document.getElementById('mealTotal' + suffix).textContent = totalMeal.toFixed(0) + ' €';
-            document.getElementById('totalLabel' + suffix).textContent = periodLabel;
-            document.getElementById('totalNet' + suffix).textContent = displayTotal.toFixed(0) + ' €';
+            document.getElementById('salary' + id).textContent = displaySalary.toFixed(2) + ' €';
+            document.getElementById('maintenanceTotal' + id).textContent = totalMaintenance.toFixed(0) + ' €';
+            document.getElementById('mealTotal' + id).textContent = totalMeal.toFixed(0) + ' €';
+            document.getElementById('totalLabel' + id).textContent = periodLabel;
+            document.getElementById('totalNet' + id).textContent = displayTotal.toFixed(2) + ' €';
 
-            document.getElementById('monthlyExplanation' + suffix).innerHTML = `
+            document.getElementById('monthlyExplanation' + id).innerHTML = `
                 <strong>Mensualisation :</strong> (${totalWeeklyHours.toFixed(1)}h/semaine × 52 semaines) ÷ 12 mois = ${monthlyHours.toFixed(1)}h/mois
             `;
 
             const dailyAllowance = dailyMaintenance + dailyMeal;
 
             if (period === 'monthly') {
-                document.getElementById('detailedCalculation' + suffix).innerHTML = `
+                document.getElementById('detailedCalculation' + id).innerHTML = `
                     <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyDays} × ${dailyAllowance.toFixed(2)}€ = ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
                 `;
             } else {
-                document.getElementById('detailedCalculation' + suffix).innerHTML = `
+                document.getElementById('detailedCalculation' + id).innerHTML = `
                     <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualDays} × ${dailyAllowance.toFixed(2)}€ = ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
                 `;
             }
@@ -653,8 +641,8 @@
             input.addEventListener('input', () => calculate(2));
         });
 
-        function exportToPdf(childNum = 1) {
-            const inp = childNum === 1 ? inputs : inputs2;
+        function exportPdf(child = 1) {
+            const inp = child === 1 ? inputs : inputs2;
             const daysPerWeek = parseInt(inp.daysPerWeek.value);
             const startTime = inp.startTime.value;
             const endTime = inp.endTime.value;
@@ -904,7 +892,7 @@
                             <div class="results-grid">
                                 <div class="result-box">
                                     <div class="result-label">Salaire horaire</div>
-                                    <div class="result-value">${monthlySalary.toFixed(0)} €</div>
+                                    <div class="result-value">${monthlySalary.toFixed(2)} €</div>
                                 </div>
                                 <div class="result-box">
                                     <div class="result-label">Indemnité entretien</div>
@@ -915,8 +903,8 @@
                                     <div class="result-value">${totalMeal.toFixed(0)} €</div>
                                 </div>
                                 <div class="result-box total">
-                                    <div class="result-label">Net Mensuel</div>
-                                    <div class="result-value">${monthlyTotal.toFixed(0)} €</div>
+                                    <div class="result-label">NET MENSUEL</div>
+                                    <div class="result-value">${monthlyTotal.toFixed(2)} €</div>
                                 </div>
                             </div>
 
@@ -944,21 +932,10 @@
             setTimeout(() => printWindow.print(), 250);
         }
 
-        document.getElementById('exportPdf').addEventListener('click', function() {
-            exportToPdf(1);
-        });
-
-        document.getElementById('exportPdf2').addEventListener('click', function() {
-            exportToPdf(2);
-        });
-
-        document.getElementById('printBtn').addEventListener('click', function() {
-            window.print();
-        });
-
-        document.getElementById('printBtn2').addEventListener('click', function() {
-            window.print();
-        });
+        document.getElementById('exportPdf').addEventListener('click', () => exportPdf(1));
+        document.getElementById('exportPdf2').addEventListener('click', () => exportPdf(2));
+        document.getElementById('printBtn').addEventListener('click', () => window.print());
+        document.getElementById('printBtn2').addEventListener('click', () => window.print());
 
         calculate(1);
         calculate(2);
