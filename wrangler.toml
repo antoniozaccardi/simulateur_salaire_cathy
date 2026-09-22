@@ -1,4 +1,4 @@
-name = "simulateur-salaire-cathy"
+name = "pajemploi-app"
 type = "javascript"
 
 [env.production]
