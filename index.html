@@ -309,6 +309,7 @@
 
         <div class="tabs">
             <button class="tab-btn active" data-tab="noa">Noa</button>
+            <button class="tab-btn" data-tab="enfant2">Enfant2</button>
         </div>
 
         <div id="noa" class="tab-pane active">
@@ -408,6 +409,104 @@
                 <button id="printBtn" class="export-btn">🖨️ Imprimer</button>
             </div>
         </div>
+
+        <div id="enfant2" class="tab-pane">
+
+        <!-- PARAMÈTRES EN HAUT -->
+        <div class="params-panel">
+            <div class="config-info">
+                <strong>Configuration :</strong> <span id="configDays2">Lun, Mar, Jeu, Ven</span> | <span id="configHours2">08:00 - 16:00</span>
+            </div>
+
+            <div class="params-grid">
+                <div class="param-item">
+                    <label>Jours/semaine</label>
+                    <select id="daysPerWeek2">
+                        <option value="4" selected>4 jours</option>
+                        <option value="5">5 jours</option>
+                    </select>
+                </div>
+
+                <div class="param-item">
+                    <label>Début</label>
+                    <input type="time" id="startTime2" value="08:00">
+                </div>
+
+                <div class="param-item">
+                    <label>Fin</label>
+                    <input type="time" id="endTime2" value="16:00">
+                </div>
+
+                <div class="param-item">
+                    <label>Heures/jour</label>
+                    <div class="display-box">
+                        <span id="calculatedHours2">8.0</span>h
+                    </div>
+                </div>
+
+                <div class="param-item">
+                    <label>Taux horaire (€)</label>
+                    <input type="number" id="hourlyRateNormal2" value="3.75" step="0.01">
+                </div>
+
+                <div class="param-item">
+                    <label>Indemnité entretien (€)</label>
+                    <input type="number" id="dailyMaintenance2" value="4" step="1">
+                </div>
+
+                <div class="param-item">
+                    <label>Indemnité repas (€)</label>
+                    <input type="number" id="dailyMeal2" value="1" step="1">
+                </div>
+
+                <div class="param-item">
+                    <label>Heures/semaine</label>
+                    <div class="display-box">
+                        <span id="paramWeeklyHours2">32.0</span>h
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RÉSULTATS EN BAS -->
+        <div class="results-panel">
+            <div class="calculations" id="monthlyExplanation2" style="margin-bottom: 24px;"></div>
+
+            <div class="results-grid">
+                <div class="result-box">
+                    <div class="result-label">Salaire horaire</div>
+                    <div class="result-value" id="salary2">0 €</div>
+                </div>
+                <div class="result-box">
+                    <div class="result-label">Indemnité entretien</div>
+                    <div class="result-value" id="maintenanceTotal2">0 €</div>
+                </div>
+                <div class="result-box">
+                    <div class="result-label">Indemnité repas</div>
+                    <div class="result-value" id="mealTotal2">0 €</div>
+                </div>
+                <div class="result-box total">
+                    <div class="result-label" id="totalLabel2">NET GLOBAL</div>
+                    <div class="result-value" id="totalNet2">0 €</div>
+                </div>
+            </div>
+
+            <div class="calculations" id="detailedCalculation2"></div>
+
+            <div class="nota-bene">
+                <strong>⚠️ À noter :</strong>
+                <ul>
+                    <li>Le salaire étant annualisé, les congés comptent comme des jours travaillés et ne sont pas décomptés des jours d'activité</li>
+                    <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistante maternelle</li>
+                    <li>Les indemnités (repas & entretien) sont uniquement dues les jours travaillés</li>
+                </ul>
+            </div>
+
+            <div class="button-group">
+                <button id="exportPdf2" class="export-btn">📥 Exporter en PDF</button>
+                <button id="printBtn2" class="export-btn">🖨️ Imprimer</button>
+            </div>
+        </div>
         </div>
     </div>
 
@@ -433,14 +532,24 @@
             dailyMeal: document.getElementById('dailyMeal'),
         };
 
+        // Inputs Enfant2
+        const inputs2 = {
+            daysPerWeek: document.getElementById('daysPerWeek2'),
+            startTime: document.getElementById('startTime2'),
+            endTime: document.getElementById('endTime2'),
+            hourlyRateNormal: document.getElementById('hourlyRateNormal2'),
+            dailyMaintenance: document.getElementById('dailyMaintenance2'),
+            dailyMeal: document.getElementById('dailyMeal2'),
+        };
+
         const daysLabels = {
             4: 'Lun, Mar, Jeu, Ven',
             5: 'Lun - Ven'
         };
 
-        function calculate() {
-            const inp = inputs;
-            const id = '';
+        function calculate(child = 1) {
+            const inp = child === 1 ? inputs : inputs2;
+            const id = child === 1 ? '' : '2';
 
             const daysPerWeek = parseInt(inp.daysPerWeek.value);
 
@@ -522,12 +631,17 @@
         }
 
         Object.values(inputs).forEach(input => {
-            input.addEventListener('change', () => calculate());
-            input.addEventListener('input', () => calculate());
+            input.addEventListener('change', () => calculate(1));
+            input.addEventListener('input', () => calculate(1));
         });
 
-        function exportPdf() {
-            const inp = inputs;
+        Object.values(inputs2).forEach(input => {
+            input.addEventListener('change', () => calculate(2));
+            input.addEventListener('input', () => calculate(2));
+        });
+
+        function exportPdf(child = 1) {
+            const inp = child === 1 ? inputs : inputs2;
             const daysPerWeek = parseInt(inp.daysPerWeek.value);
             const startTime = inp.startTime.value;
             const endTime = inp.endTime.value;
@@ -817,10 +931,13 @@
             setTimeout(() => printWindow.print(), 250);
         }
 
-        document.getElementById('exportPdf').addEventListener('click', () => exportPdf());
+        document.getElementById('exportPdf').addEventListener('click', () => exportPdf(1));
+        document.getElementById('exportPdf2').addEventListener('click', () => exportPdf(2));
         document.getElementById('printBtn').addEventListener('click', () => window.print());
+        document.getElementById('printBtn2').addEventListener('click', () => window.print());
 
-        calculate();
+        calculate(1);
+        calculate(2);
     </script>
 </body>
 </html>
