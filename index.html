@@ -248,6 +248,43 @@
             }
         }
 
+        .tabs-container {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #e5e5e5;
+            margin-bottom: 12px;
+        }
+
+        .tab-button {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666666;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tab-button:hover {
+            color: #1d1d1d;
+        }
+
+        .tab-button.active {
+            color: #0071e3;
+            border-bottom-color: #0071e3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.8em;
@@ -260,6 +297,11 @@
             .results-grid {
                 grid-template-columns: 1fr 1fr;
             }
+
+            .tab-button {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
@@ -269,6 +311,14 @@
             <h1>Simulateur de Salaire</h1>
             <p>Catherine ZACCARDI | Yerres (91330)</p>
         </header>
+
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="enfant1">Enfant1</button>
+            <button class="tab-button" data-tab="enfant2">Enfant2</button>
+        </div>
+
+        <!-- ENFANT 1 -->
+        <div id="enfant1" class="tab-content active">
 
         <!-- PARAMÈTRES EN HAUT -->
         <div class="params-panel">
@@ -365,9 +415,127 @@
                 <button id="printBtn" class="export-btn">🖨️ Imprimer</button>
             </div>
         </div>
+        </div>
+
+        <!-- ENFANT 2 -->
+        <div id="enfant2" class="tab-content">
+
+        <!-- PARAMÈTRES EN HAUT -->
+        <div class="params-panel">
+            <div class="config-info">
+                <strong>Configuration :</strong> <span id="configDays2">Lun - Ven</span> | <span id="configHours2">08:00 - 16:00</span>
+            </div>
+
+            <div class="params-grid">
+                <div class="param-item">
+                    <label>Jours/semaine</label>
+                    <select id="daysPerWeek2">
+                        <option value="4">4 jours</option>
+                        <option value="5">5 jours</option>
+                    </select>
+                </div>
+
+                <div class="param-item">
+                    <label>Début</label>
+                    <input type="time" id="startTime2" value="08:00">
+                </div>
+
+                <div class="param-item">
+                    <label>Fin</label>
+                    <input type="time" id="endTime2" value="16:00">
+                </div>
+
+                <div class="param-item">
+                    <label>Heures/jour</label>
+                    <div class="display-box">
+                        <span id="calculatedHours2">8.0</span>h
+                    </div>
+                </div>
+
+                <div class="param-item">
+                    <label>Taux horaire (€)</label>
+                    <input type="number" id="hourlyRateNormal2" value="3.75" step="0.01">
+                </div>
+
+                <div class="param-item">
+                    <label>Indemnité entretien (€)</label>
+                    <input type="number" id="dailyMaintenance2" value="4" step="1">
+                </div>
+
+                <div class="param-item">
+                    <label>Indemnité repas (€)</label>
+                    <input type="number" id="dailyMeal2" value="1" step="1">
+                </div>
+
+                <div class="param-item">
+                    <label>Heures/semaine</label>
+                    <div class="display-box">
+                        <span id="paramWeeklyHours2">32.0</span>h
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RÉSULTATS EN BAS -->
+        <div class="results-panel">
+            <div class="calculations" id="monthlyExplanation2" style="margin-bottom: 24px;"></div>
+
+            <div class="results-grid">
+                <div class="result-box">
+                    <div class="result-label">Salaire horaire</div>
+                    <div class="result-value" id="salary2">0 €</div>
+                </div>
+                <div class="result-box">
+                    <div class="result-label">Indemnité entretien</div>
+                    <div class="result-value" id="maintenanceTotal2">0 €</div>
+                </div>
+                <div class="result-box">
+                    <div class="result-label">Indemnité repas</div>
+                    <div class="result-value" id="mealTotal2">0 €</div>
+                </div>
+                <div class="result-box total">
+                    <div class="result-label" id="totalLabel2">Net Mensuel</div>
+                    <div class="result-value" id="totalNet2">0 €</div>
+                </div>
+            </div>
+
+            <div class="calculations" id="detailedCalculation2"></div>
+
+            <div class="nota-bene">
+                <strong>⚠️ À noter :</strong>
+                <ul>
+                    <li>Le salaire étant annualisé, les congés comptent comme des jours travaillés et ne sont pas décomptés des jours d'activité</li>
+                    <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistante maternelle</li>
+                    <li>Les indemnités (repas & entretien) sont uniquement dues les jours travaillés</li>
+                </ul>
+            </div>
+
+            <div class="button-group">
+                <button id="exportPdf2" class="export-btn">📥 Exporter en PDF</button>
+                <button id="printBtn2" class="export-btn">🖨️ Imprimer</button>
+            </div>
+        </div>
+        </div>
     </div>
 
     <script>
+        // Gestion des onglets
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Inputs pour Enfant 1
         const inputs = {
             daysPerWeek: document.getElementById('daysPerWeek'),
             startTime: document.getElementById('startTime'),
@@ -377,35 +545,48 @@
             dailyMeal: document.getElementById('dailyMeal'),
         };
 
+        // Inputs pour Enfant 2
+        const inputs2 = {
+            daysPerWeek: document.getElementById('daysPerWeek2'),
+            startTime: document.getElementById('startTime2'),
+            endTime: document.getElementById('endTime2'),
+            hourlyRateNormal: document.getElementById('hourlyRateNormal2'),
+            dailyMaintenance: document.getElementById('dailyMaintenance2'),
+            dailyMeal: document.getElementById('dailyMeal2'),
+        };
+
         const daysLabels = {
             4: 'Lun, Mar, Jeu, Ven',
             5: 'Lun - Ven'
         };
 
-        function calculate() {
-            const daysPerWeek = parseInt(inputs.daysPerWeek.value);
+        function calculate(childNum = 1) {
+            const inp = childNum === 1 ? inputs : inputs2;
+            const suffix = childNum === 1 ? '' : '2';
 
-            const [startHour, startMin] = inputs.startTime.value.split(':').map(Number);
-            const [endHour, endMin] = inputs.endTime.value.split(':').map(Number);
+            const daysPerWeek = parseInt(inp.daysPerWeek.value);
+
+            const [startHour, startMin] = inp.startTime.value.split(':').map(Number);
+            const [endHour, endMin] = inp.endTime.value.split(':').map(Number);
 
             const startTotalMin = startHour * 60 + startMin;
             const endTotalMin = endHour * 60 + endMin;
             const workMinutes = endTotalMin - startTotalMin;
             const hoursPerDay = workMinutes / 60;
 
-            document.getElementById('calculatedHours').textContent = hoursPerDay.toFixed(1);
+            document.getElementById('calculatedHours' + suffix).textContent = hoursPerDay.toFixed(1);
 
             const totalWeeklyHours = daysPerWeek * hoursPerDay;
-            document.getElementById('paramWeeklyHours').textContent = totalWeeklyHours.toFixed(1);
+            document.getElementById('paramWeeklyHours' + suffix).textContent = totalWeeklyHours.toFixed(1);
 
             const daysLabel = daysLabels[daysPerWeek];
-            const timeRange = `${inputs.startTime.value.slice(0,5)} - ${inputs.endTime.value.slice(0,5)}`;
-            document.getElementById('configDays').textContent = daysLabel;
-            document.getElementById('configHours').textContent = timeRange;
+            const timeRange = `${inp.startTime.value.slice(0,5)} - ${inp.endTime.value.slice(0,5)}`;
+            document.getElementById('configDays' + suffix).textContent = daysLabel;
+            document.getElementById('configHours' + suffix).textContent = timeRange;
 
-            const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
-            const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
-            const dailyMeal = parseFloat(inputs.dailyMeal.value);
+            const hourlyRateNormal = parseFloat(inp.hourlyRateNormal.value);
+            const dailyMaintenance = parseFloat(inp.dailyMaintenance.value);
+            const dailyMeal = parseFloat(inp.dailyMeal.value);
             const period = 'monthly';
 
             const monthlyHours = (totalWeeklyHours * 52) / 12;
@@ -439,41 +620,47 @@
             const totalMaintenance = dailyMaintenance * monthlyDays;
             const totalMeal = dailyMeal * monthlyDays;
 
-            document.getElementById('salary').textContent = displaySalary.toFixed(0) + ' €';
-            document.getElementById('maintenanceTotal').textContent = totalMaintenance.toFixed(0) + ' €';
-            document.getElementById('mealTotal').textContent = totalMeal.toFixed(0) + ' €';
-            document.getElementById('totalLabel').textContent = periodLabel;
-            document.getElementById('totalNet').textContent = displayTotal.toFixed(0) + ' €';
+            document.getElementById('salary' + suffix).textContent = displaySalary.toFixed(0) + ' €';
+            document.getElementById('maintenanceTotal' + suffix).textContent = totalMaintenance.toFixed(0) + ' €';
+            document.getElementById('mealTotal' + suffix).textContent = totalMeal.toFixed(0) + ' €';
+            document.getElementById('totalLabel' + suffix).textContent = periodLabel;
+            document.getElementById('totalNet' + suffix).textContent = displayTotal.toFixed(0) + ' €';
 
-            document.getElementById('monthlyExplanation').innerHTML = `
+            document.getElementById('monthlyExplanation' + suffix).innerHTML = `
                 <strong>Mensualisation :</strong> (${totalWeeklyHours.toFixed(1)}h/semaine × 52 semaines) ÷ 12 mois = ${monthlyHours.toFixed(1)}h/mois
             `;
 
             const dailyAllowance = dailyMaintenance + dailyMeal;
 
             if (period === 'monthly') {
-                document.getElementById('detailedCalculation').innerHTML = `
+                document.getElementById('detailedCalculation' + suffix).innerHTML = `
                     <strong>Mensuel :</strong> ${monthlyHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${monthlySalary.toFixed(2)}€ | Indemnités : ${monthlyDays} × ${dailyAllowance.toFixed(2)}€ = ${monthlyAllowances.toFixed(2)}€ | <strong>Total : ${monthlyTotal.toFixed(2)}€</strong>
                 `;
             } else {
-                document.getElementById('detailedCalculation').innerHTML = `
+                document.getElementById('detailedCalculation' + suffix).innerHTML = `
                     <strong>Annuel :</strong> ${annualHours.toFixed(1)}h × ${hourlyRateNormal}€ = ${annualSalary.toFixed(2)}€ | Indemnités : ${annualDays} × ${dailyAllowance.toFixed(2)}€ = ${annualAllowances.toFixed(2)}€ | <strong>Total : ${annualTotal.toFixed(2)}€</strong>
                 `;
             }
         }
 
         Object.values(inputs).forEach(input => {
-            input.addEventListener('change', calculate);
-            input.addEventListener('input', calculate);
+            input.addEventListener('change', () => calculate(1));
+            input.addEventListener('input', () => calculate(1));
         });
 
-        document.getElementById('exportPdf').addEventListener('click', function() {
-            const daysPerWeek = parseInt(inputs.daysPerWeek.value);
-            const startTime = inputs.startTime.value;
-            const endTime = inputs.endTime.value;
-            const hourlyRateNormal = parseFloat(inputs.hourlyRateNormal.value);
-            const dailyMaintenance = parseFloat(inputs.dailyMaintenance.value);
-            const dailyMeal = parseFloat(inputs.dailyMeal.value);
+        Object.values(inputs2).forEach(input => {
+            input.addEventListener('change', () => calculate(2));
+            input.addEventListener('input', () => calculate(2));
+        });
+
+        function exportToPdf(childNum = 1) {
+            const inp = childNum === 1 ? inputs : inputs2;
+            const daysPerWeek = parseInt(inp.daysPerWeek.value);
+            const startTime = inp.startTime.value;
+            const endTime = inp.endTime.value;
+            const hourlyRateNormal = parseFloat(inp.hourlyRateNormal.value);
+            const dailyMaintenance = parseFloat(inp.dailyMaintenance.value);
+            const dailyMeal = parseFloat(inp.dailyMeal.value);
 
             const [startHour, startMin] = startTime.split(':').map(Number);
             const [endHour, endMin] = endTime.split(':').map(Number);
@@ -755,13 +942,26 @@
             printWindow.document.write(htmlContent);
             printWindow.document.close();
             setTimeout(() => printWindow.print(), 250);
+        }
+
+        document.getElementById('exportPdf').addEventListener('click', function() {
+            exportToPdf(1);
+        });
+
+        document.getElementById('exportPdf2').addEventListener('click', function() {
+            exportToPdf(2);
         });
 
         document.getElementById('printBtn').addEventListener('click', function() {
             window.print();
         });
 
-        calculate();
+        document.getElementById('printBtn2').addEventListener('click', function() {
+            window.print();
+        });
+
+        calculate(1);
+        calculate(2);
     </script>
 </body>
 </html>
