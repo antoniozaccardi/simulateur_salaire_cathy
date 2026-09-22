@@ -1,5 +1,4 @@
 name = "pajemploi-app"
-type = "javascript"
 
 [env.production]
 route = "simulateur-salaire-cathy.pages.dev"
