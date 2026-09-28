@@ -19,7 +19,7 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen py-2 px-2">
 
     <div class="max-w-7xl mx-auto print-container">
-        
+
         <!-- En-tête -->
         <header class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-2.5 mb-2.5 flex flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2.5">
@@ -44,10 +44,10 @@
 
         <!-- Grille principale Côte à Côte (2 colonnes strictes) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start">
-            
+
             <!-- Colonne de gauche (Paramètres - 6 colonnes) -->
             <div class="lg:col-span-6 space-y-2.5">
-                
+
                 <!-- Planning et horaires -->
                 <div class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-2.5">
                     <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-100">
@@ -142,7 +142,7 @@
 
             <!-- Colonne de droite (Synthèse & Notes - 6 colonnes) -->
             <div class="lg:col-span-6 space-y-2.5">
-                
+
                 <!-- Synthèse financière -->
                 <div class="bg-slate-100 rounded-xl shadow-xs p-2.5 border border-slate-200">
                     <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-slate-200">
@@ -206,7 +206,7 @@
             const semainesAn = parseFloat(document.getElementById('semaines-an').value) || 0;
             const heureArrivee = document.getElementById('heure-arrivee').value;
             const heureDepart = document.getElementById('heure-depart').value;
-            
+
             const tauxHoraire = parseFloat(document.getElementById('taux-horaire').value) || 0;
             const indEntretienJour = parseFloat(document.getElementById('ind-entretien').value) || 0;
             const indRepasJour = parseFloat(document.getElementById('ind-repas').value) || 0;
@@ -214,7 +214,7 @@
 
             const [hArr, mArr] = heureArrivee.split(':').map(Number);
             const [hDep, mDep] = heureDepart.split(':').map(Number);
-            
+
             let minutesJour = (hDep * 60 + mDep) - (hArr * 60 + mArr);
             if (minutesJour < 0) minutesJour = 0;
             let heuresJour = minutesJour / 60;
