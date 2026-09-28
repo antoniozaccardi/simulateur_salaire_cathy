@@ -11,191 +11,176 @@
         @media print {
             body { background: white !important; padding: 0 !important; margin: 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .no-print { display: none !important; }
-            .print-container { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; }
-            @page { size: A4 landscape; margin: 4mm; }
+            .print-container { box-shadow: none !important; border: none !important; padding: 2mm !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; }
+            @page { size: A4 portrait; margin: 6mm; }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen py-2 px-2">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen py-3 px-3">
 
-    <div class="max-w-7xl mx-auto print-container">
+    <div class="max-w-2xl mx-auto print-container space-y-3">
 
         <!-- En-tête -->
-        <header class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-2.5 mb-2.5 flex flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-rose-600/20">
+        <header class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-3 flex flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-rose-600 flex items-center justify-center text-white font-bold text-base shadow-md shadow-rose-600/20">
                     €
                 </div>
                 <div>
-                    <h1 class="text-base font-bold tracking-tight text-slate-900 leading-none mb-1">Simulation salariale</h1>
-                    <p class="text-[10px] font-medium text-slate-500">Catherine Zaccardi &bull; Assistante Maternelle &bull; Yerres (91330)</p>
+                    <h1 class="text-base font-bold tracking-tight text-slate-900 leading-tight">Simulation salariale</h1>
+                    <p class="text-[10.5px] font-medium text-slate-500">Catherine Zaccardi &bull; Assistante Maternelle &bull; Yerres (91330)</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span class="no-print inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Interactif
+                <span class="no-print inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Interactif
                 </span>
-                <button onclick="window.print()" class="no-print inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all shadow-sm cursor-pointer">
+                <button onclick="window.print()" class="no-print inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl transition-all shadow-sm cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                    Imprimer / Paysage A4
+                    Imprimer / Portrait A4
                 </button>
             </div>
         </header>
 
-        <!-- Grille principale Côte à Côte (2 colonnes strictes) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start">
-
-            <!-- Colonne de gauche (Paramètres - 6 colonnes) -->
-            <div class="lg:col-span-6 space-y-2.5">
-
-                <!-- Planning et horaires -->
-                <div class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-2.5">
-                    <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-100">
-                        <div class="flex items-center gap-1.5 text-slate-900 font-semibold text-[11px] uppercase tracking-wider">
-                            <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <h2>Planning et horaires</h2>
-                        </div>
-                        <span id="badge-jours" class="text-[10px] font-bold px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md">4 jours / sem</span>
-                    </div>
-
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Jours / sem</label>
-                            <select id="jours-semaine" onchange="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                                <option value="1">1 jour</option>
-                                <option value="2">2 jours</option>
-                                <option value="3">3 jours</option>
-                                <option value="4" selected>4 jours</option>
-                                <option value="5">5 jours</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Semaines / an</label>
-                            <input type="number" id="semaines-an" value="52" min="1" max="52" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                        </div>
-
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Arrivée</label>
-                            <input type="time" id="heure-arrivee" value="08:30" onchange="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                        </div>
-
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Départ</label>
-                            <input type="time" id="heure-depart" value="17:30" onchange="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                        </div>
-                    </div>
-
-                    <!-- Sous-totaux horaires -->
-                    <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-100">
-                        <div class="bg-slate-50 rounded-lg p-1.5 border border-slate-100">
-                            <span class="block text-[9px] font-bold text-slate-400 uppercase">Heures par jour</span>
-                            <span id="txt-heures-jour" class="text-xs font-bold text-slate-900">9.0h</span>
-                        </div>
-                        <div class="bg-slate-50 rounded-lg p-1.5 border border-slate-100">
-                            <span class="block text-[9px] font-bold text-slate-400 uppercase">Heures par semaine</span>
-                            <span id="txt-heures-semaine" class="text-xs font-bold text-slate-900">36.0h</span>
-                        </div>
-                    </div>
+        <!-- Planning et horaires -->
+        <div class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-3">
+            <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-100">
+                <div class="flex items-center gap-1.5 text-slate-900 font-semibold text-[11px] tracking-wide">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <h2>Planning et horaires</h2>
                 </div>
-
-                <!-- Rémunération et indemnités -->
-                <div class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-2.5">
-                    <div class="flex items-center gap-1.5 text-slate-900 font-semibold text-[11px] uppercase tracking-wider mb-2 pb-1.5 border-b border-slate-100">
-                        <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <h2>Rémunération et indemnités</h2>
-                    </div>
-
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Taux horaire</label>
-                            <div class="relative">
-                                <input type="number" id="taux-horaire" value="3.75" step="0.05" min="0" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-1.5 pr-5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                                <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center pointer-events-none text-[9px] font-bold text-slate-400">€</div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Entretien /j</label>
-                            <div class="relative">
-                                <input type="number" id="ind-entretien" value="4.00" step="0.10" min="0" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-1.5 pr-5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                                <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center pointer-events-none text-[9px] font-bold text-slate-400">€</div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Repas /j</label>
-                            <div class="relative">
-                                <input type="number" id="ind-repas" value="1.00" step="0.10" min="0" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-1.5 pr-5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                                <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center pointer-events-none text-[9px] font-bold text-slate-400">€</div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Jours / mois</label>
-                            <input type="number" id="jours-mois" value="18" min="1" max="31" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                        </div>
-                    </div>
-                </div>
-
+                <span id="badge-jours" class="text-[10px] font-bold px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md">4 jours / sem</span>
             </div>
 
-            <!-- Colonne de droite (Synthèse & Notes - 6 colonnes) -->
-            <div class="lg:col-span-6 space-y-2.5">
-
-                <!-- Synthèse financière -->
-                <div class="bg-slate-100 rounded-xl shadow-xs p-2.5 border border-slate-200">
-                    <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-slate-200">
-                        <h2 class="text-xs font-bold text-slate-700">Synthèse financière</h2>
-                        <span class="text-[9px] font-semibold px-2 py-0.5 bg-rose-100 text-rose-700 rounded-md">Mensualisé</span>
-                    </div>
-
-                    <div class="space-y-1.5 text-xs">
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-600 font-medium text-[11px]">Salaire net de base</span>
-                            <span id="res-salaire-net" class="font-bold text-xs text-slate-900">585.00 €</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-600 font-medium text-[11px]">Indemnités d'entretien</span>
-                            <span id="res-ind-entretien" class="font-bold text-xs text-slate-800">72.00 €</span>
-                        </div>
-                        <div class="flex justify-between items-center pb-1.5 border-b border-slate-200">
-                            <span class="text-slate-600 font-medium text-[11px]">Indemnités de repas</span>
-                            <span id="res-ind-repas" class="font-bold text-xs text-slate-800">18.00 €</span>
-                        </div>
-
-                        <!-- Détails de calcul -->
-                        <div class="bg-white rounded-lg p-1.5 border border-slate-200 text-[9.5px] text-slate-600 space-y-0.5 font-mono">
-                            <div class="font-bold text-slate-700">Détails de calcul :</div>
-                            <div id="detail-ligne-1">- Mensualisation : (36.0h/semaine × 52 semaines) ÷ 12 mois = 156.0h/mois</div>
-                            <div id="detail-ligne-2">- Mensuel : 156.0h × 3.75€ = 585.00€ | Indemnités : 18 × 5.00€ = 90.00€</div>
-                        </div>
-
-                        <div class="pt-0.5 flex flex-col justify-between items-start">
-                            <span class="text-[10.5px] font-bold text-rose-600">Net global estimé</span>
-                            <div class="w-full flex items-baseline justify-between">
-                                <span class="text-[9.5px] text-slate-500">Salaire + Indemnités incluses</span>
-                                <span id="res-net-global" class="text-sm font-black text-rose-600 tracking-tight">675.00 €</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-4 gap-2">
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Jours / sem</label>
+                    <select id="jours-semaine" onchange="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                        <option value="1">1 jour</option>
+                        <option value="2">2 jours</option>
+                        <option value="3">3 jours</option>
+                        <option value="4" selected>4 jours</option>
+                        <option value="5">5 jours</option>
+                    </select>
                 </div>
 
-                <!-- À noter -->
-                <div class="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2 text-amber-900">
-                    <div class="flex items-center gap-1.5 font-bold text-[10.5px] text-amber-800 mb-1">
-                        <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        À noter :
-                    </div>
-                    <ul class="space-y-0.5 text-[9.5px] leading-tight text-amber-900/90 list-disc list-inside">
-                        <li>Le salaire étant annualisé sur 52 semaines, les congés payés sont compris dans la mensualisation.</li>
-                        <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistante maternelle.</li>
-                        <li>Les indemnités (repas & entretien) sont uniquement dues les jours réellement travaillés.</li>
-                    </ul>
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Semaines / an</label>
+                    <input type="number" id="semaines-an" value="52" min="1" max="52" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
                 </div>
 
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Arrivée</label>
+                    <input type="time" id="heure-arrivee" value="08:30" onchange="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                </div>
+
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Départ</label>
+                    <input type="time" id="heure-depart" value="17:30" onchange="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                </div>
             </div>
 
+            <!-- Sous-totaux horaires -->
+            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-100">
+                <div class="bg-slate-50 rounded-lg p-1.5 border border-slate-100">
+                    <span class="block text-[9px] font-bold text-slate-400 uppercase">Heures par jour</span>
+                    <span id="txt-heures-jour" class="text-xs font-bold text-slate-900">9.0h</span>
+                </div>
+                <div class="bg-slate-50 rounded-lg p-1.5 border border-slate-100">
+                    <span class="block text-[9px] font-bold text-slate-400 uppercase">Heures par semaine</span>
+                    <span id="txt-heures-semaine" class="text-xs font-bold text-slate-900">36.0h</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rémunération et indemnités -->
+        <div class="bg-white rounded-xl shadow-xs border border-slate-200/80 p-3">
+            <div class="flex items-center gap-1.5 text-slate-900 font-semibold text-[11px] tracking-wide mb-2 pb-1.5 border-b border-slate-100">
+                <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <h2>Rémunération et indemnités</h2>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2">
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Taux horaire net</label>
+                    <div class="relative">
+                        <input type="number" id="taux-horaire" value="3.75" step="0.05" min="0" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-2 pr-6 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                        <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center pointer-events-none text-[9.5px] font-bold text-slate-400">€</div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Entretien / jour</label>
+                    <div class="relative">
+                        <input type="number" id="ind-entretien" value="4.00" step="0.10" min="0" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-2 pr-6 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                        <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center pointer-events-none text-[9.5px] font-bold text-slate-400">€</div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Repas / jour</label>
+                    <div class="relative">
+                        <input type="number" id="ind-repas" value="1.00" step="0.10" min="0" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-2 pr-6 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                        <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center pointer-events-none text-[9.5px] font-bold text-slate-400">€</div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Jours / mois</label>
+                    <input type="number" id="jours-mois" value="18" min="1" max="31" oninput="calculer()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Synthèse financière -->
+        <div class="bg-slate-100 rounded-xl shadow-xs p-3 border border-slate-200">
+            <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-slate-200">
+                <h2 class="text-xs font-bold text-slate-700">Synthèse financière</h2>
+                <span class="text-[9.5px] font-semibold px-2 py-0.5 bg-rose-100 text-rose-700 rounded-md">Mensualisé</span>
+            </div>
+
+            <div class="space-y-1.5 text-xs">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-600 font-medium text-[11px]">Salaire net de base</span>
+                    <span id="res-salaire-net" class="font-bold text-xs text-slate-900">585.00 €</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-600 font-medium text-[11px]">Indemnités d'entretien</span>
+                    <span id="res-ind-entretien" class="font-bold text-xs text-slate-800">72.00 €</span>
+                </div>
+                <div class="flex justify-between items-center pb-1.5 border-b border-slate-200">
+                    <span class="text-slate-600 font-medium text-[11px]">Indemnités de repas</span>
+                    <span id="res-ind-repas" class="font-bold text-xs text-slate-800">18.00 €</span>
+                </div>
+
+                <!-- Détails de calcul -->
+                <div class="bg-white rounded-lg p-1.5 border border-slate-200 text-[10px] text-slate-600 space-y-0.5 font-mono">
+                    <div class="font-bold text-slate-700">Détails de calcul :</div>
+                    <div id="detail-ligne-1">- Mensualisation : (36.0h/semaine × 52 semaines) ÷ 12 mois = 156.0h/mois</div>
+                    <div id="detail-ligne-2">- Mensuel : 156.0h × 3.75€ = 585.00€ | Indemnités : 18 × 5.00€ = 90.00€</div>
+                </div>
+
+                <div class="pt-0.5 flex flex-col justify-between items-start">
+                    <span class="text-[11px] font-bold text-rose-600">Net global estimé</span>
+                    <div class="w-full flex items-baseline justify-between">
+                        <span class="text-[10px] text-slate-500">Salaire + Indemnités incluses</span>
+                        <span id="res-net-global" class="text-sm font-black text-rose-600 tracking-tight">675.00 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- À noter -->
+        <div class="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 text-amber-900">
+            <div class="flex items-center gap-1.5 font-bold text-[11px] text-amber-800 mb-1">
+                <svg class="w-3.5 h-3.5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                À noter :
+            </div>
+            <ul class="space-y-0.5 text-[10px] leading-snug text-amber-900/90 list-disc list-inside">
+                <li>Le salaire étant annualisé sur 52 semaines, les congés payés sont compris dans la mensualisation.</li>
+                <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistante maternelle.</li>
+                <li>Les indemnités (repas & entretien) sont uniquement dues les jours réellement travaillés.</li>
+            </ul>
         </div>
 
     </div>
