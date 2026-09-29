@@ -12,7 +12,8 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: white !important; padding: 0 !important; margin: 0 !important; }
             .no-print { display: none !important; }
-            .print-container { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 auto !important; max-width: 42rem !important; width: 100% !important; }
+            /* zoom : agrandit le contenu pour qu'il remplisse la feuille A4 en hauteur comme en largeur */
+            .print-container { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; max-width: none !important; width: auto !important; zoom: 1.42; }
             .print-container > * { break-inside: avoid; page-break-inside: avoid; }
             input, select { -webkit-appearance: none; appearance: none; background-image: none !important; }
             @page { size: A4 portrait; margin: 6mm; }
