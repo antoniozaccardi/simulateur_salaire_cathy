@@ -9,9 +9,12 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         @media print {
-            body { background: white !important; padding: 0 !important; margin: 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: white !important; padding: 0 !important; margin: 0 !important; }
             .no-print { display: none !important; }
-            .print-container { box-shadow: none !important; border: none !important; padding: 2mm !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; }
+            .print-container { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 auto !important; max-width: 42rem !important; width: 100% !important; }
+            .print-container > * { break-inside: avoid; page-break-inside: avoid; }
+            input, select { -webkit-appearance: none; appearance: none; background-image: none !important; }
             @page { size: A4 portrait; margin: 6mm; }
         }
     </style>
