@@ -181,6 +181,7 @@
                 À noter :
             </div>
             <ul class="space-y-0.5 text-[10px] leading-snug text-amber-900/90 list-disc list-inside">
+                <li id="note-brut" class="font-semibold">Taux horaire brut : 4.80 € | Brut de base : 748.85 €</li>
                 <li>Le salaire étant annualisé sur 52 semaines, les congés payés sont compris dans la mensualisation.</li>
                 <li>Le salaire horaire est invariable sauf jours sans solde pris par l'assistante maternelle.</li>
                 <li>Les indemnités (repas & entretien) sont uniquement dues les jours réellement travaillés.</li>
@@ -190,6 +191,13 @@
     </div>
 
     <script>
+        // Part salariale (bulletin) : CSG/RDS sur 98,25% du brut + cotisations sur le brut
+        const TAUX_CSG_CRDS = 0.029 + 0.068;
+        const ASSIETTE_CSG = 0.9825;
+        const TAUX_COTISATIONS = 0.004 + 0.069 + 0.0401 + 0.0104; // vieillesse + retraite compl. + prévoyance
+        const TAUX_CHARGES_SALARIALES = ASSIETTE_CSG * TAUX_CSG_CRDS + TAUX_COTISATIONS; // ~21,88%
+        const RATIO_NET_BRUT = 1 - TAUX_CHARGES_SALARIALES; // ~0,7812
+
         function calculer() {
             const joursSemaine = parseFloat(document.getElementById('jours-semaine').value);
             const semainesAn = parseFloat(document.getElementById('semaines-an').value) || 0;
@@ -235,6 +243,10 @@
             document.getElementById('res-ind-entretien').textContent = totalIndEntretienMois.toFixed(2) + ' €';
             document.getElementById('res-ind-repas').textContent = totalIndRepasMois.toFixed(2) + ' €';
             document.getElementById('res-net-global').textContent = netGlobal.toFixed(2) + ' €';
+
+            const tauxHoraireBrut = tauxHoraire / RATIO_NET_BRUT;
+            const brutDeBase = salaireNetMensuel / RATIO_NET_BRUT;
+            document.getElementById('note-brut').textContent = `Taux horaire brut : ${tauxHoraireBrut.toFixed(2)} € | Brut de base : ${brutDeBase.toFixed(2)} €`;
 
             const sumIndemnitesJour = indEntretienJour + indRepasJour;
             document.getElementById('detail-ligne-1').textContent = `- Mensualisation : (${heuresSemaine.toFixed(1)}h/semaine × ${semainesAn} semaines) ÷ 12 mois = ${heuresMensuelles.toFixed(1)}h/mois`;
